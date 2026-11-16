@@ -535,7 +535,7 @@ function initGL(){
       r.render(scene, cam);
     })();
     showModel();
-  } catch(e) { R = null; $("poster").style.display = "flex"; }
+  } catch(e) { console.error("Не удалось запустить 3D-модель:", e); R = null; $("poster").style.display = "flex"; }
 }
 function resize(){ if (!R) return; const w = $("stage").clientWidth, h = $("stage").clientHeight; if (!w || !h) return; R.r.setSize(w, h, false); R.cam.aspect = w / h; zoom = Math.max(1, 1.5 / (w / h)); R.cam.updateProjectionMatrix(); }
 function recolor(){ if (floor) floor.material.color.set(0xcbd9e3); }
@@ -573,9 +573,10 @@ function buildModel(cat, v){
   const col = CATS[cat].color, mk = (c, r) => new THREE.MeshStandardMaterial({color: c, roughness: r || .82, metalness: .01});
   const base = new THREE.Color(col).multiplyScalar(1.12);
   const M = mk(base, .88), D = mk(new THREE.Color(col).multiplyScalar(.66), .9), L = mk(new THREE.Color(col).lerp(new THREE.Color(0xffffff), .18), .94), W = mk(0x60432f, .52), B = mk(new THREE.Color(col).multiplyScalar(.43), .62);
+  const g = new THREE.Group();
   const weave = fabricBumpTex(cat === "sofa" ? 17 : cat === "armchair" ? 29 : cat === "mattress" ? 41 : 53);
-  [M,D,L].forEach(m => { m.bumpMap = weave; m.bumpScale = .045; m.roughness = .96; }); g.userData.textures = [weave];
-  const g = new THREE.Group(); g.userData.mats = [M, D, L, W, B]; g.userData.fab = [M, L, D];
+  [M,D,L].forEach(m => { m.bumpMap = weave; m.bumpScale = .045; m.roughness = .96; });
+  g.userData.textures = [weave]; g.userData.mats = [M, D, L, W, B]; g.userData.fab = [M, L, D];
   const btn = new THREE.SphereGeometry(.04, 10, 8);
   if (cat === "sofa" || cat === "armchair") {
     const sofa = cat === "sofa", rec = v === "recl", corner = v === "corner";
