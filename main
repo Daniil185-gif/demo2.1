@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Облако — выездная химчистка мягкой мебели</title>
+<meta name="description" content="Выездная химчистка мягкой мебели: диваны, кресла, матрасы, стулья. Примерная цена сразу, мастер подтвердит запись.">
+<style>
+:root{--bg:#e8f0f2;--surf:#fff;--ink:#13262c;--mute:#4d6168;--line:#b9cbd1;--acc:#1f7a8c;--acc3:#2aa39a;--acc-ink:#fff;--warn:#b3402a;--stage:#d6eaf0;--stage2:#9ec0cb;--tint:rgba(31,122,140,.1);--chip:rgba(255,255,255,.72);--glow1:rgba(127,214,194,.45);--glow2:rgba(31,122,140,.2);--sh:0 1px 2px rgba(19,38,44,.12),0 12px 32px rgba(19,38,44,.08);
+color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d171a;--surf:#162327;--ink:#e8f2f4;--mute:#94aab1;--line:#2a3e44;--acc:#62c7d8;--acc3:#7fe0cf;--acc-ink:#05222a;--warn:#ff9b84;--stage:#2a4850;--stage2:#111e22;--tint:rgba(98,199,216,.14);--chip:rgba(14,24,27,.6);--glow1:rgba(98,199,216,.12);--glow2:rgba(127,224,207,.07);--sh:0 1px 2px rgba(0,0,0,.4),0 12px 32px rgba(0,0,0,.25);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0d171a;--surf:#162327;--ink:#e8f2f4;--mute:#94aab1;--line:#2a3e44;--acc:#62c7d8;--acc3:#7fe0cf;--acc-ink:#05222a;--warn:#ff9b84;--stage:#2a4850;--stage2:#111e22;--tint:rgba(98,199,216,.14);--chip:rgba(14,24,27,.6);--glow1:rgba(98,199,216,.12);--glow2:rgba(127,224,207,.07);--sh:0 1px 2px rgba(0,0,0,.4),0 12px 32px rgba(0,0,0,.25);color-scheme:dark}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+body{margin:0;min-height:100vh;color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:radial-gradient(820px 380px at 88% -60px,var(--glow1),transparent 70%),radial-gradient(640px 360px at -8% 40px,var(--glow2),transparent 70%),var(--bg)}
+.wrap{max-width:1060px;margin:0 auto;padding:0 18px 110px}
+.top{display:flex;align-items:center;justify-content:space-between;padding:16px 0}
+.brand{display:flex;align-items:center;gap:10px;font-size:1.4rem;font-weight:800;letter-spacing:-.03em}
+.logo{width:32px;height:32px;border-radius:50% 50% 50% 12%;background:linear-gradient(135deg,var(--acc),var(--acc3));box-shadow:0 4px 12px rgba(31,122,140,.35)}
+.ico{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surf);color:var(--ink);font-size:1.2rem;cursor:pointer;box-shadow:var(--sh)}
+.hero{padding:14px 0 26px}
+h1{font-size:clamp(2rem,6vw,3.2rem);line-height:1.05;letter-spacing:-.04em;font-weight:800;margin:0 0 12px;max-width:14em}
+.hero p{margin:0 0 18px;color:var(--mute);font-size:1.05rem;max-width:32em}
+.tags{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;margin:0}
+.tags li{padding:7px 14px;border-radius:999px;background:var(--surf);border:1px solid var(--line);font-size:.9rem;box-shadow:var(--sh)}
+.tags li::before{content:"✓";color:var(--acc);font-weight:800;margin-right:7px}
+.grid{display:grid;gap:18px;grid-template-columns:1fr}
+@media (min-width:860px){.grid{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start}.left{position:sticky;top:14px}.stage{height:520px!important}.bar{display:none!important}.wrap{padding-bottom:56px}}
+.stage{position:relative;height:min(84vw,390px);background:linear-gradient(180deg,var(--stage),var(--stage2));border:1px solid var(--line);border-radius:30px;overflow:hidden;touch-action:pan-y;cursor:grab;box-shadow:var(--sh)}
+.stage::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(120% 90% at 50% 40%,transparent 55%,rgba(0,0,0,.16))}
+.stage canvas{display:block;width:100%;height:100%}
+.badge{position:absolute;left:14px;top:14px;z-index:2;padding:6px 14px;border-radius:999px;background:var(--chip);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);font-weight:700;font-size:.88rem;pointer-events:none}
+.poster{position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;padding:24px;color:var(--mute);z-index:1}
+h2{font-size:1.15rem;letter-spacing:-.01em;margin:0 0 14px}
+.panel{background:var(--surf);border:1px solid var(--line);border-radius:26px;padding:22px;box-shadow:var(--sh)}
+.panel+.panel{margin-top:18px}
+.btn{min-height:48px;padding:0 20px;border-radius:15px;border:1px solid var(--line);background:var(--surf);color:var(--ink);font:inherit;font-weight:600;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.btn.pri{background:linear-gradient(135deg,var(--acc),var(--acc3));color:var(--acc-ink);border-color:transparent;box-shadow:0 6px 16px rgba(31,122,140,.3)}
+.btn.pri:hover{transform:translateY(-1px)}
+.btn.sm{min-height:40px;padding:0 12px}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.tab{min-height:46px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;cursor:pointer}
+.tab[aria-pressed="true"]{background:var(--acc);color:var(--acc-ink);border-color:transparent;font-weight:700}
+.tab.cat{display:flex;flex-direction:column;align-items:center;gap:6px;min-height:80px;padding:10px 6px;border-radius:20px;border:2px solid var(--line);font-size:.9rem;background:var(--surf)}
+.tab.cat[aria-pressed="true"]{background:var(--tint);color:var(--ink);border-color:var(--acc);font-weight:700}
+.sw{width:28px;height:28px;border-radius:50%;box-shadow:inset 0 -5px 0 rgba(0,0,0,.18)}
+.row{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:16px}
+label.chk{display:flex;gap:10px;align-items:center;min-height:44px}
+input[type=checkbox]{width:22px;height:22px;accent-color:var(--acc)}
+.price{font-size:1.6rem;font-weight:800;letter-spacing:-.03em}
+.note{color:var(--mute);font-size:.86rem}
+.item{display:flex;gap:12px;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid var(--line)}
+.dot{display:inline-block;vertical-align:-5px;margin-right:8px;color:var(--acc)}.dot svg{width:22px;height:22px}
+.qty{display:flex;align-items:center;gap:8px}
+.qty b{min-width:22px;text-align:center}
+.field{display:block;margin-top:14px}
+.field span{display:block;font-weight:600;margin-bottom:5px}
+input[type=text],input[type=tel],input[type=date],input[type=time],input[type=password],input[type=number],input[type=datetime-local],select,textarea{width:100%;min-height:50px;padding:10px 14px;border-radius:14px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}
+textarea{min-height:92px}
+.err{display:block;color:var(--warn);font-size:.85rem;min-height:1em;margin-top:2px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:520px){.grid2{grid-template-columns:1fr}}
+.bar{position:fixed;left:0;right:0;bottom:0;padding:10px 18px calc(10px + env(safe-area-inset-bottom,0px));background:var(--surf);border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:4;box-shadow:0 -8px 24px rgba(19,38,44,.14)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(92px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:14px;display:none;gap:12px;align-items:center;z-index:5}
+.toast button{background:none;border:0;color:inherit;font:inherit;font-weight:700;text-decoration:underline;cursor:pointer;min-height:40px}
+pre{white-space:pre-wrap;word-break:break-word;background:var(--bg);padding:14px;border-radius:14px;font:inherit;border:1px solid var(--line)}
+footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--line);color:var(--mute);font-size:.85rem}
+.nav{display:flex;gap:8px;overflow-x:auto;padding:2px 0 14px;scrollbar-width:none}
+.nav a{flex:none;padding:9px 16px;border-radius:999px;border:1px solid var(--line);background:var(--surf);color:var(--ink);text-decoration:none;font-weight:600;font-size:.92rem}
+.nav a[aria-current]{background:var(--acc);color:var(--acc-ink);border-color:transparent}
+.tab.cat .ic{display:flex;color:var(--acc)}
+.tcat{display:flex;align-items:center;gap:10px;margin:20px 0 8px;font-weight:700}.tcat svg{width:30px;height:30px;color:var(--acc)}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}th{color:var(--mute);font-weight:600}
+.h1s{font-size:clamp(1.7rem,5vw,2.4rem);line-height:1.1;letter-spacing:-.03em;margin:0 0 10px}
+.h3{font-size:1rem;margin:14px 0 4px}
+.tabs2{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.rq{border:1px solid var(--line);border-radius:18px;padding:16px;margin-top:12px;background:var(--bg)}
+.badge2{padding:3px 10px;border-radius:999px;background:var(--tint);font-size:.8rem;font-weight:700}
+#seoLinks{display:flex;flex-wrap:wrap;gap:6px 16px}#seoLinks a{color:var(--acc)}
+body:not([data-view="raschet"]) .bar{display:none!important}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top"><div class="brand"><i class="logo"></i><span id="brandName">Облако</span></div><button class="ico" id="theme" type="button" aria-label="Сменить тему">◐</button></header>
+<nav class="nav" id="nav" aria-label="Разделы"><a href="#raschet">Расчёт</a><a href="#tarify">Тарифы</a><a href="#zayavka">Заявка</a><a href="#kabinet">Кабинет</a></nav>
+<div data-view="raschet"><section class="hero">
+  <h1>Чистая мягкая мебель без вывоза</h1>
+  <p id="tag"></p>
+  <ul class="tags"><li>Выезд на дом</li><li>Примерная цена сразу</li><li>Мастер подтвердит запись</li></ul>
+</section>
+
+<div class="grid">
+  <div class="left"><div class="stage" id="stage"><div class="badge" id="badge"></div><div class="poster" id="poster">3D недоступно на этом устройстве. Выбор и заказ работают как обычно.</div></div></div>
+  <div class="right">
+    <div class="panel">
+      <h2>Что почистить?</h2>
+      <div class="tabs" id="cats" role="group" aria-label="Категория"></div>
+      <div class="chips" id="vars" role="group" aria-label="Вариант"></div>
+      <div id="opts"></div>
+      <div id="otherBox" hidden>
+        <label class="field"><span>Опишите предмет</span><textarea id="otherText" placeholder="Например, пуф из велюра с пятном от кофе"></textarea><small class="err" id="otherErr"></small></label>
+        <p class="note">Фото можно будет приложить в версии с сервером. Стоимость определит мастер.</p>
+      </div>
+      <div class="row"><div><div class="price" id="unit"></div><div class="note" id="unitNote"></div></div><button class="btn pri" id="add" type="button">Добавить в заказ</button></div>
+    </div>
+    <div class="panel"><h2>Ваш заказ</h2><div id="cart"></div><a class="btn pri" href="#zayavka" style="display:flex;justify-content:center;align-items:center;margin-top:14px;text-decoration:none">Оформить заявку</a></div>
+  </div>
+</div>
+
+</div>
+<div data-view="zayavka" hidden>
+<section class="panel" id="form" aria-label="Заявка">
+  <h2>Заявка</h2><p class="note" id="zsum"></p>
+  <div class="grid2">
+    <label class="field"><span>Имя</span><input type="text" id="name" autocomplete="name"><small class="err" id="e-name"></small></label>
+    <label class="field"><span>Телефон</span><input type="tel" id="phone" autocomplete="tel" placeholder="+7 900 000-00-00"><small class="err" id="e-phone"></small></label>
+  </div>
+  <label class="field"><span>Адрес</span><input type="text" id="addr" autocomplete="street-address"><small class="err" id="e-addr"></small></label>
+  <label class="chk"><input type="checkbox" id="out"> <span id="outLbl"></span></label>
+  <div class="grid2">
+    <label class="field"><span>Желаемая дата (необязательно)</span><input type="date" id="date"></label>
+    <label class="field"><span>Желаемое время</span><input type="time" id="time"><small class="err" id="e-time"></small></label>
+  </div>
+  <p class="note">Дата и время — пожелание. Мастер подтвердит запись после разговора с вами.</p>
+  <label class="field"><span>Комментарий</span><textarea id="comm"></textarea></label>
+  <label class="chk"><input type="checkbox" id="agree"> <span>Согласен на обработку персональных данных</span></label>
+  <small class="err" id="e-agree"></small>
+  <div class="row"><div class="note" id="sumLine"></div><button class="btn pri" id="send" type="button">Отправить заявку</button></div>
+  <div id="result" hidden style="margin-top:16px">
+    <h2>Заявка сформирована</h2>
+    <p class="note">Демо без сервера: заявка сохранена только в этом браузере и видна в кабинете. Чтобы она дошла до компании, скопируйте текст и отправьте его.</p>
+    <pre id="resText"></pre>
+    <button class="btn" id="copy" type="button">Скопировать</button>
+  </div>
+</section>
+</div>
+<div data-view="tarify" hidden><section class="panel" id="tar"></section></div>
+<div data-view="kabinet" hidden><section class="panel" id="cab"></section></div>
+<div data-view="seo" hidden><section class="panel" id="seo"></section></div>
+
+<footer>
+  <p>Цены и условия задаются в настройках CONFIG в начале скрипта. Итоговую цену и время согласует мастер.</p>
+  <p id="contacts"></p><p id="seoLinks"></p>
+  <p>3D-модели собраны из геометрии Three.js (лицензия MIT), внешних моделей нет.</p>
+</footer>
+</div>
+<div class="bar" id="bar" hidden><div><div class="note" id="barN"></div><div class="price" id="barP"></div></div><a class="btn pri" href="#zayavka" style="display:inline-flex;align-items:center;text-decoration:none">Оформить</a></div>
+<div class="toast" id="toast"><span id="toastMsg"></span><button id="undo" type="button">Отменить</button></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ---------- Настройки компании (меняются здесь) ----------
+const CONFIG = {
+  company: "Облако", city: "Ваш город",
+  tagline: "Выберите мебель, посмотрите примерную цену и отправьте заявку.",
+  contacts: "Контакты: укажите телефон и мессенджер в CONFIG.contacts",
+  prices: {
+    sofa: {s2: 3500, s3: 4500, corner: 6500},
+    armchair: {std: 1500, recl: 2200},
+    mattress: {single: 2000, double: 3000},
+    chair: {seat: 400, back: 700}
+  },
+  minOrder: 2500,      // минимум относится к чистке, выезд за город добавляется отдельно
+  heavyPct: 25,        // сильные загрязнения, процент к цене позиции
+  secondSidePct: 40,   // вторая сторона матраса, процент к цене позиции
+  outTown: 700,        // фиксированная доплата за выезд за город
+  ownerPassword: "owner" // ДЕМО: настоящий вход проверяет сервер
+};
+// Порядок: цена варианта × (1 + загрязнение) × (1 + вторая сторона), округление до 10 ₽ за единицу, затем × количество.
+
+const CATS = {
+  sofa: {name: "Диван", vars: [["s2", "2 места"], ["s3", "3 места"], ["corner", "Угловой"]], color: 0x3a8a78},
+  armchair: {name: "Кресло", vars: [["std", "Обычное"], ["recl", "Реклайнер"]], color: 0xe0a030},
+  mattress: {name: "Матрас", vars: [["single", "Односпальный"], ["double", "Двуспальный"]], color: 0x8aa4e0},
+  chair: {name: "Стул", vars: [["seat", "Сиденье"], ["back", "Сиденье со спинкой"]], color: 0xe06a58},
+  other: {name: "Другое", vars: [], color: 0x9a6bb0}
+};
+const $ = id => document.getElementById(id);
+const rub = n => n.toLocaleString("ru-RU") + " ₽";
+const hex = c => "#" + c.toString(16).padStart(6, "0");
+const KEY = "oblako:v1";
+let S = {cart: [], draft: {}, cat: "sofa", v: "s2", heavy: false, side2: false};
+function load(){ try { const r = JSON.parse(localStorage.getItem(KEY) || "null"); if (r) S = Object.assign(S, r); } catch(e){} }
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} }
+
+// ---------- Расчёт ----------
+function unitPrice(it){
+  if (it.cat === "other") return null;
+  let p = CONFIG.prices[it.cat][it.v];
+  if (it.heavy) p *= 1 + CONFIG.heavyPct / 100;
+  if (it.cat === "mattress" && it.side2) p *= 1 + CONFIG.secondSidePct / 100;
+  return Math.round(p / 10) * 10;
+}
+function totals(){
+  let known = 0, manual = 0;
+  S.cart.forEach(it => { const u = unitPrice(it); if (u === null) manual += it.qty; else known += u * it.qty; });
+  const cleaning = known > 0 ? Math.max(known, CONFIG.minOrder) : 0, out = $("out").checked ? CONFIG.outTown : 0;
+  return {known, manual, cleaning, out, sum: cleaning + out};
+}
+function totalText(T){ return T.manual ? (T.sum ? "от " + rub(T.sum) + " + по фото" : "По фото") : rub(T.sum); }
+function itemLabel(it){
+  const c = CATS[it.cat];
+  if (it.cat === "other") return "Другое: " + it.text;
+  return c.name + ", " + c.vars.find(x => x[0] === it.v)[1] + (it.heavy ? ", сильные загрязнения" : "") + (it.side2 ? ", обе стороны" : "");
+}
+
+// ---------- Выбор ----------
+function renderPicker(){
+  $("cats").innerHTML = ""; $("vars").innerHTML = "";
+  Object.keys(CATS).forEach(k => {
+    const b = document.createElement("button"); b.className = "tab cat"; b.type = "button"; b.innerHTML = '<span class="ic">' + ICON[k] + "</span><span>" + CATS[k].name + "</span>";
+    b.setAttribute("aria-pressed", String(S.cat === k));
+    b.onclick = () => { S.cat = k; S.v = CATS[k].vars[0] ? CATS[k].vars[0][0] : "other"; S.side2 = false; renderPicker(); showModel(); save(); };
+    $("cats").appendChild(b);
+  });
+  CATS[S.cat].vars.forEach(([k, n]) => {
+    const b = document.createElement("button"); b.className = "tab"; b.type = "button"; b.textContent = n;
+    b.setAttribute("aria-pressed", String(S.v === k));
+    b.onclick = () => { S.v = k; renderPicker(); showModel(); save(); };
+    $("vars").appendChild(b);
+  });
+  const other = S.cat === "other"; $("otherBox").hidden = !other; $("opts").innerHTML = "";
+  if (!other) {
+    $("opts").insertAdjacentHTML("beforeend", '<label class="chk"><input type="checkbox" id="heavy"' + (S.heavy ? " checked" : "") + '> <span>Сильные загрязнения</span></label>');
+    if (S.cat === "mattress") $("opts").insertAdjacentHTML("beforeend", '<label class="chk"><input type="checkbox" id="side2"' + (S.side2 ? " checked" : "") + '> <span>Чистка второй стороны</span></label>');
+    $("heavy").onchange = e => { S.heavy = e.target.checked; applyDirt(); renderPrice(); save(); };
+    if ($("side2")) $("side2").onchange = e => { S.side2 = e.target.checked; renderPrice(); save(); };
+  }
+  renderPrice();
+}
+function renderPrice(){
+  const vv = CATS[S.cat].vars.find(x => x[0] === S.v); $("badge").textContent = CATS[S.cat].name + (vv ? ", " + vv[1] : "");
+  if (S.cat === "other") { $("unit").textContent = "По фото"; $("unitNote").textContent = "Цену назовёт мастер"; return; }
+  $("unit").textContent = "≈ " + rub(unitPrice({cat: S.cat, v: S.v, heavy: S.heavy, side2: S.side2})); $("unitNote").textContent = "Примерно за единицу";
+}
+$("add").onclick = () => {
+  if (S.cat === "other") {
+    const t = $("otherText").value.trim();
+    if (!t) { $("otherErr").textContent = "Опишите предмет, чтобы мастер мог оценить работу"; return; }
+    $("otherErr").textContent = ""; S.cart.push({cat: "other", v: "other", text: t, qty: 1}); $("otherText").value = "";
+  } else {
+    const side = S.cat === "mattress" && S.side2;
+    const same = S.cart.find(i => i.cat === S.cat && i.v === S.v && !!i.heavy === S.heavy && !!i.side2 === side);
+    if (same) same.qty++; else S.cart.push({cat: S.cat, v: S.v, heavy: S.heavy, side2: side, qty: 1});
+  }
+  renderCart(); save(); toast("Добавлено в заказ", false);
+};
+
+// ---------- Корзина ----------
+let lastRemoved = null, toastTimer;
+function toast(msg, undo){
+  $("toastMsg").textContent = msg; $("undo").style.display = undo ? "" : "none"; $("toast").style.display = "flex";
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => { $("toast").style.display = "none"; lastRemoved = null; }, 5000);
+}
+$("undo").onclick = () => { if (lastRemoved) { S.cart.splice(lastRemoved.i, 0, lastRemoved.it); lastRemoved = null; renderCart(); save(); } $("toast").style.display = "none"; };
+function renderCart(){
+  const box = $("cart");
+  if (!S.cart.length) box.innerHTML = '<p class="note">Пока пусто. Выберите мебель и нажмите «Добавить в заказ».</p>';
+  else {
+    box.innerHTML = "";
+    S.cart.forEach((it, i) => {
+      const u = unitPrice(it), row = document.createElement("div"); row.className = "item";
+      const info = document.createElement("div"), t = document.createElement("div"), d = document.createElement("i"), p = document.createElement("div");
+      d.className = "dot"; d.innerHTML = ICON[it.cat]; t.append(d, itemLabel(it));
+      p.className = "note"; p.textContent = u === null ? "По фото" : rub(u) + " × " + it.qty + " = " + rub(u * it.qty);
+      info.append(t, p);
+      const q = document.createElement("div"); q.className = "qty";
+      if (it.cat !== "other") q.innerHTML = '<button class="btn sm" data-a="dec" data-i="' + i + '" aria-label="Меньше">−</button><b>' + it.qty + '</b><button class="btn sm" data-a="inc" data-i="' + i + '" aria-label="Больше">+</button>';
+      q.insertAdjacentHTML("beforeend", '<button class="btn sm" data-a="del" data-i="' + i + '">Удалить</button>');
+      row.append(info, q); box.appendChild(row);
+    });
+    const T = totals(), tt = document.createElement("div"); tt.className = "row";
+    let h = "<div>";
+    if (T.known > 0) h += "<div>Чистка: " + rub(T.cleaning) + (T.cleaning > T.known ? " (минимальный заказ)" : "") + "</div>";
+    if (T.out) h += "<div>Выезд за город: " + rub(T.out) + "</div>";
+    if (T.manual) h += "<div>Предметов по фото: " + T.manual + ", цену назовёт мастер</div>";
+    tt.innerHTML = h + '</div><div class="price">' + totalText(T) + "</div>"; box.appendChild(tt);
+  }
+  renderSummary();
+}
+$("cart").onclick = e => {
+  const b = e.target.closest("button[data-a]"); if (!b) return;
+  const i = +b.dataset.i, it = S.cart[i], a = b.dataset.a;
+  if (a === "inc") it.qty++; else if (a === "dec") { if (it.qty > 1) it.qty--; }
+  else if (a === "del") { lastRemoved = {i, it}; S.cart.splice(i, 1); toast("Позиция удалена", true); }
+  renderCart(); save();
+};
+function renderSummary(){
+  const T = totals(), n = S.cart.reduce((s, i) => s + i.qty, 0);
+  $("sumLine").textContent = S.cart.length ? "Предметов: " + n + (T.manual ? "" : ", итого " + rub(T.sum)) : "Добавьте хотя бы одну позицию";
+  $("send").disabled = !S.cart.length; $("bar").hidden = !S.cart.length;
+  $("barN").textContent = "Предметов: " + n; $("barP").textContent = totalText(T);
+  $("zsum").textContent = S.cart.length ? "Ваш заказ: " + S.cart.map(i => itemLabel(i) + (i.cat === "other" ? "" : " × " + i.qty)).join("; ") + ". Итого " + totalText(T) + "." : "Заказ пуст. Вернитесь к расчёту и добавьте мебель.";
+}
+
+// ---------- Форма ----------
+const F = ["name", "phone", "addr", "date", "time", "comm"];
+function restoreDraft(){ F.forEach(k => { if (S.draft[k]) $(k).value = S.draft[k]; }); $("out").checked = !!S.draft.out; $("agree").checked = !!S.draft.agree; }
+function saveDraft(){ F.forEach(k => S.draft[k] = $(k).value); S.draft.out = $("out").checked; S.draft.agree = $("agree").checked; save(); }
+document.querySelectorAll("#form input,#form textarea").forEach(el => el.addEventListener("input", saveDraft));
+$("out").addEventListener("change", () => { saveDraft(); renderCart(); });
+$("send").onclick = () => {
+  const err = {}, digits = $("phone").value.replace(/\D/g, "");
+  if (!$("name").value.trim()) err.name = "Укажите имя";
+  if (digits.length < 10) err.phone = "Введите телефон полностью, не меньше 10 цифр";
+  if (!$("addr").value.trim()) err.addr = "Укажите адрес, куда приехать";
+  if ($("time").value && !$("date").value) err.time = "Для времени выберите дату";
+  if (!$("agree").checked) err.agree = "Нужно согласие на обработку данных";
+  ["name", "phone", "addr", "time", "agree"].forEach(k => $("e-" + k).textContent = err[k] || "");
+  const bad = Object.keys(err)[0]; if (bad) { (bad === "agree" ? $("agree") : $(bad)).focus(); return; }
+  const T = totals(), L = [CONFIG.company + ": заявка на чистку", ""];
+  S.cart.forEach(it => { const u = unitPrice(it); L.push("• " + itemLabel(it) + (u === null ? " (по фото)" : " × " + it.qty + " = " + rub(u * it.qty))); });
+  L.push("", "Предварительно: " + totalText(T) + (T.known && T.cleaning > T.known ? " (применён минимум)" : ""));
+  if (T.out) L.push("Выезд за город: " + rub(T.out));
+  L.push("", "Имя: " + $("name").value.trim(), "Телефон: " + $("phone").value.trim(), "Адрес: " + $("addr").value.trim());
+  if ($("date").value) L.push("Желаемо: " + $("date").value + ($("time").value ? " " + $("time").value : ""));
+  if ($("comm").value.trim()) L.push("Комментарий: " + $("comm").value.trim());
+  L.push("", "Итоговую цену и время согласует мастер.");
+  const key = L.join("|"), reqs = getReqs();
+  if (!reqs.length || reqs[0].key !== key) { reqs.unshift({id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), key: key, name: $("name").value.trim(), phone: $("phone").value.trim(), addr: $("addr").value.trim(), out: $("out").checked, date: $("date").value, time: $("time").value, comm: $("comm").value.trim(), items: JSON.parse(JSON.stringify(S.cart)), est: totalText(T), status: "new", final: "", at: "", note: "", hist: [new Date().toLocaleString("ru-RU") + ": заявка создана"]}); putReqs(reqs); }
+  $("resText").textContent = L.join("\n"); $("result").hidden = false; $("result").scrollIntoView({block: "nearest"});
+};
+$("copy").onclick = async () => { try { await navigator.clipboard.writeText($("resText").textContent); toast("Скопировано", false); } catch(e) { toast("Не удалось скопировать, выделите текст вручную", false); } };
+
+// ---------- Тема ----------
+function isDark(){ const t = document.documentElement.dataset.theme; return t ? t === "dark" : matchMedia("(prefers-color-scheme: dark)").matches; }
+$("theme").onclick = () => {
+  const nx = isDark() ? "light" : "dark"; document.documentElement.dataset.theme = nx;
+  try { localStorage.setItem(KEY + ":theme", nx); } catch(e){}
+  recolor();
+};
+try { const t = localStorage.getItem(KEY + ":theme"); if (t) document.documentElement.dataset.theme = t; } catch(e){}
+
+// ---------- 3D ----------
+let R = null, zoom = 1, floor, group, TEX = [], yaw = .5, pitch = .25, tYaw = .5, tPitch = .25, drag = false, lx = 0, ly = 0, popT = 1;
+function dirtTex(seed){
+  let s = seed; const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
+  const c = document.createElement("canvas"); c.width = c.height = 256; const g = c.getContext("2d");
+  g.fillStyle = "#fff"; g.fillRect(0, 0, 256, 256);
+  for (let i = 0; i < 9; i++) {
+    const x = rnd() * 256, y = rnd() * 256, r = 22 + rnd() * 48, gr = g.createRadialGradient(x, y, 2, x, y, r);
+    gr.addColorStop(0, "rgba(78,52,28,.78)"); gr.addColorStop(.6, "rgba(96,68,38,.4)"); gr.addColorStop(1, "rgba(96,68,38,0)");
+    g.fillStyle = gr; g.fillRect(0, 0, 256, 256);
+  }
+  for (let i = 0; i < 60; i++) { g.fillStyle = "rgba(60,40,20," + (.25 + rnd() * .4) + ")"; g.beginPath(); g.arc(rnd() * 256, rnd() * 256, 1 + rnd() * 3, 0, 7); g.fill(); }
+  return new THREE.CanvasTexture(c);
+}
+function applyDirt(){
+  if (!group || !TEX.length) return;
+  group.userData.fab.forEach((m, i) => { m.map = S.heavy && S.cat !== "other" ? TEX[i % 3] : null; m.needsUpdate = true; });
+}
+function initGL(){
+  try {
+    if (!window.THREE) throw 0;
+    const probe = document.createElement("canvas"); if (!(probe.getContext("webgl") || probe.getContext("experimental-webgl"))) throw 0;
+    const r = new THREE.WebGLRenderer({antialias: true, alpha: true});
+    r.setPixelRatio(Math.min(devicePixelRatio || 1, 2)); r.shadowMap.enabled = true; r.shadowMap.type = THREE.PCFSoftShadowMap;
+    $("stage").insertBefore(r.domElement, $("stage").firstChild);
+    const scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(34, 1, 2, 30);
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x8aa0aa, .85));
+    const d = new THREE.DirectionalLight(0xffffff, .85); d.position.set(3.5, 6, 4); d.castShadow = true;
+    d.shadow.mapSize.set(1024, 1024); Object.assign(d.shadow.camera, {left: -4, right: 4, top: 4, bottom: -4, near: .5, far: 16}); d.shadow.bias = -.0004; d.shadow.normalBias = .03; scene.add(d);
+    const f = new THREE.DirectionalLight(0xbfe3ff, .35); f.position.set(-4, 3, -3); scene.add(f);
+    floor = new THREE.Mesh(new THREE.CircleGeometry(2.9, 64), new THREE.MeshStandardMaterial({roughness: 1})); floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
+    TEX = [dirtTex(11), dirtTex(23), dirtTex(37)];
+    R = {r, scene, cam}; recolor(); resize(); new ResizeObserver(resize).observe($("stage"));
+    const st = $("stage");
+    st.addEventListener("pointerdown", e => { drag = true; lx = e.clientX; ly = e.clientY; st.setPointerCapture(e.pointerId); st.style.cursor = "grabbing"; });
+    st.addEventListener("pointermove", e => { if (!drag) return; tYaw += (e.clientX - lx) * .01; tPitch = Math.max(.05, Math.min(.7, tPitch + (e.clientY - ly) * .006)); lx = e.clientX; ly = e.clientY; });
+    ["pointerup", "pointercancel"].forEach(n => st.addEventListener(n, () => { drag = false; st.style.cursor = "grab"; }));
+    st.addEventListener("dblclick", () => { tYaw = .5; tPitch = .25; });
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    (function loop(){
+      requestAnimationFrame(loop); if (document.hidden || !st.offsetParent) return;
+      if (!drag && !reduce) tYaw += .002;
+      yaw += (tYaw - yaw) * .15; pitch += (tPitch - pitch) * .15; popT = Math.min(1, popT + .06);
+      if (group) { group.rotation.y = yaw; const s = .85 + .15 * popT; group.scale.set(s, s, s); }
+      cam.position.set(0, 1.4 + pitch * 4, (7.4 - pitch * 2) * zoom); cam.lookAt(0, .85, 0);
+      if (group && group.userData.eyes) { const bl = (performance.now() % 4200) < 140 ? .1 : 1; group.userData.eyes.forEach(e => e.scale.y = bl); }
+      r.render(scene, cam);
+    })();
+    showModel();
+  } catch(e) { R = null; $("poster").style.display = "flex"; }
+}
+function resize(){ if (!R) return; const w = $("stage").clientWidth, h = $("stage").clientHeight; if (!w || !h) return; R.r.setSize(w, h, false); R.cam.aspect = w / h; zoom = Math.max(1, 1.5 / (w / h)); R.cam.updateProjectionMatrix(); }
+function recolor(){ if (floor) floor.material.color.set(isDark() ? 0x34535b : 0xe9f4f6); }
+
+function rb(w, h, d, r, seg){
+  seg = seg || 8;
+  const g = new THREE.BoxGeometry(w, h, d, seg, seg, seg), p = g.attributes.position, n = g.attributes.normal;
+  const hx = w / 2 - r, hy = h / 2 - r, hz = d / 2 - r, v = new THREE.Vector3(), c = new THREE.Vector3();
+  for (let i = 0; i < p.count; i++) {
+    v.fromBufferAttribute(p, i);
+    c.set(Math.max(-hx, Math.min(hx, v.x)), Math.max(-hy, Math.min(hy, v.y)), Math.max(-hz, Math.min(hz, v.z)));
+    v.sub(c).normalize(); n.setXYZ(i, v.x, v.y, v.z); p.setXYZ(i, c.x + v.x * r, c.y + v.y * r, c.z + v.z * r);
+  }
+  return g;
+}
+function put(g, geo, mat, x, y, z, rx, rz){ const o = new THREE.Mesh(geo, mat); o.position.set(x, y, z); if (rx) o.rotation.x = rx; if (rz) o.rotation.z = rz; o.castShadow = true; o.receiveShadow = true; g.add(o); return o; }
+function legs(g, mat, pts, h){ pts.forEach(q => put(g, new THREE.CylinderGeometry(.07, .045, h, 14), mat, q[0], h / 2, q[1], q[1] * .12, -q[0] * .05)); }
+// Лицо крепится к самой детали (par), поэтому наклоняется вместе с ней и не «висит» в воздухе.
+function face(par, root, x, y, z, s){
+  const ink = new THREE.MeshStandardMaterial({color: 0x182226, roughness: .25}), shine = new THREE.MeshBasicMaterial({color: 0xffffff});
+  const line = new THREE.MeshBasicMaterial({color: 0x182226}), pink = new THREE.MeshBasicMaterial({color: 0xff8f9c, transparent: true, opacity: .6, polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4});
+  root.userData.mats.push(ink, shine, line, pink);
+  const eyes = root.userData.eyes = [];
+  [-1, 1].forEach(k => {
+    const e = new THREE.Group(); e.position.set(x + k * .2 * s, y, z);
+    const ball = new THREE.Mesh(new THREE.SphereGeometry(.06 * s, 18, 14), ink); ball.scale.set(1, 1.35, .55); e.add(ball);
+    const hl = new THREE.Mesh(new THREE.SphereGeometry(.018 * s, 8, 6), shine); hl.position.set(.016 * s, .032 * s, .03 * s); e.add(hl);
+    par.add(e); eyes.push(e);
+    const ch = new THREE.Mesh(new THREE.CircleGeometry(.06 * s, 20), pink); ch.scale.x = 1.4; ch.position.set(x + k * .3 * s, y - .08 * s, z + .006); par.add(ch);
+  });
+  const sm = new THREE.Mesh(new THREE.TorusGeometry(.05 * s, .011 * s, 8, 16, Math.PI), line); sm.rotation.z = Math.PI; sm.position.set(x, y - .04 * s, z + .008); par.add(sm);
+}
+// Размеры подобраны так, чтобы грани соседних деталей не лежали в одной плоскости (иначе текстуры мерцают).
+function buildModel(cat, v){
+  const col = CATS[cat].color, mk = (c, r) => new THREE.MeshStandardMaterial({color: c, roughness: r || .92});
+  const M = mk(col), D = mk(new THREE.Color(col).multiplyScalar(.78)), L = mk(new THREE.Color(col).lerp(new THREE.Color(0xffffff), .28)), W = mk(0x6b4f3a, .5), B = mk(new THREE.Color(col).multiplyScalar(.55), .6);
+  const g = new THREE.Group(); g.userData.mats = [M, D, L, W, B]; g.userData.fab = [M, L, D];
+  const btn = new THREE.SphereGeometry(.04, 10, 8);
+  if (cat === "sofa" || cat === "armchair") {
+    const sofa = cat === "sofa", rec = v === "recl", corner = v === "corner";
+    const n = !sofa ? 1 : (v === "s3" ? 3 : 2), cw = sofa ? 1.0 : 1.05, seatW = n * cw, arm = .34, w = seatW + 2 * arm, tilt = rec ? .34 : .12;
+    put(g, rb(w - .04, .36, 1.24, .08), D, 0, .42, 0);
+    for (let i = 0; i < n; i++) put(g, rb(cw - .03, .3, 1.0, .13), M, (i - (n - 1) / 2) * cw, .76, .1);
+    const nb = n === 3 ? 3 : 1, bw = seatW / nb; let host = null;
+    for (let i = 0; i < nb; i++) { const bc = put(g, rb(bw - .03, .84, .34, .15), L, (i - (nb - 1) / 2) * bw, 1.2, -.42, -tilt); if (i === (nb - 1) / 2) host = bc; }
+    put(g, rb(w - .06, 1.1, .3, .1), D, 0, 1.0, -.6, rec ? -.2 : 0);
+    put(g, rb(arm, .8, 1.3, .16), M, -(seatW / 2 + arm / 2), .68, 0);
+    if (corner) {
+      put(g, rb(arm, .8, 2.5, .16), M, seatW / 2 + arm / 2, .68, .6);
+      put(g, rb(cw, .36, 1.16, .08), D, seatW / 2 - cw / 2, .42, 1.25);
+      put(g, rb(cw - .03, .3, 1.1, .13), M, seatW / 2 - cw / 2, .76, 1.2);
+      legs(g, W, [[w / 2 - .2, 1.6], [seatW / 2 - cw + .2, 1.6]], .26);
+    } else put(g, rb(arm, .8, 1.3, .16), M, seatW / 2 + arm / 2, .68, 0);
+    if (rec) put(g, rb(cw, .24, .8, .1), L, 0, .5, 1.0, -.12);
+    legs(g, W, [[-w / 2 + .2, .5], [w / 2 - .2, .5], [-w / 2 + .2, -.5], [w / 2 - .2, -.5]], .26);
+    face(host, g, 0, .14, .17, sofa ? 1 : .85);
+  } else if (cat === "mattress") {
+    const w = v === "double" ? 2.1 : 1.35, h = 2.1, d = .42, cols = v === "double" ? 5 : 3, rows = 6, cy = h / 2 + .05;
+    put(g, rb(w + .1, .05, d + .5, .02), W, 0, .025, 0);
+    const bd = put(g, rb(w, h, d, .14, 10), M, 0, cy, 0);
+    put(g, rb(w + .04, .06, d + .04, .03), L, 0, h + .05, 0); put(g, rb(w + .04, .06, d + .04, .03), L, 0, .05, 0);
+    [-1, 1].forEach(k => put(g, rb(.06, h + .12, d + .05, .03), L, k * w / 2, cy, 0));
+    [-1, 1].forEach(s => { for (let i = 1; i < cols; i++) for (let j = 1; j < rows; j++) {
+      const x = -w / 2 + i * w / cols, y = .05 + j * h / rows; if (s === 1 && y > 1.3 && y < 1.95) continue;
+      put(g, btn, B, x, y, s * (d / 2 + .005)); } });
+    const hd = put(g, new THREE.TorusGeometry(.09, .022, 8, 16), L, w / 2 + .05, 1.2, 0); hd.rotation.y = Math.PI / 2;
+    face(bd, g, 0, 1.62 - cy, d / 2, 1.3);
+  } else if (cat === "chair") {
+    const back = v === "back";
+    put(g, rb(1.1, .16, 1.1, .07), D, 0, .82, 0);
+    const cu = put(g, rb(1.04, back ? .2 : .3, 1.04, .1), M, 0, back ? .98 : 1.0, 0);
+    legs(g, W, [[-.42, -.42], [.42, -.42], [-.42, .42], [.42, .42]], .8);
+    if (back) {
+      [-1, 1].forEach(k => put(g, new THREE.CylinderGeometry(.05, .05, 1.2, 10), W, k * .5, 1.4, -.46));
+      const pn = put(g, rb(1.04, .9, .14, .07), M, 0, 1.55, -.46); face(pn, g, 0, .03, .07, .8);
+    } else face(cu, g, 0, 0, .52, .6);
+  } else {
+    const bd = put(g, rb(1.5, .9, 1.5, .38, 12), M, 0, .55, 0); put(g, btn, B, 0, 1.0, 0);
+    legs(g, W, [[-.5, -.5], [.5, -.5], [-.5, .5], [.5, .5]], .15);
+    face(bd, g, 0, 0, .75, 1);
+  }
+  return g;
+}
+function showModel(){
+  if (!R) return;
+  if (group) { R.scene.remove(group); group.traverse(o => { if (o.geometry) o.geometry.dispose(); }); group.userData.mats.forEach(m => m.dispose()); }
+  group = buildModel(S.cat, S.v); R.scene.add(group); popT = 0; applyDirt();
+}
+
+// ---------- Иконки ----------
+const SV = p => '<svg viewBox="0 0 48 48" width="34" height="34" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p + "</svg>";
+const ICON = {
+  sofa: SV('<path d="M9 22v-5a5 5 0 0 1 5-5h20a5 5 0 0 1 5 5v5"/><path d="M5 27a4 4 0 0 1 8 0v3h22v-3a4 4 0 0 1 8 0v8a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2z"/><path d="M24 17v13M11 37v4M37 37v4"/>'),
+  armchair: SV('<path d="M14 21v-5a5 5 0 0 1 5-5h10a5 5 0 0 1 5 5v5"/><path d="M9 26a3.5 3.5 0 0 1 7 0v3h16v-3a3.5 3.5 0 0 1 7 0v8a2 2 0 0 1-2 2H11a2 2 0 0 1-2-2z"/><path d="M14 36v5M34 36v5"/>'),
+  mattress: SV('<rect x="12" y="5" width="24" height="38" rx="5"/><path d="M12 15h24M12 24h24M12 33h24M24 5v38"/>'),
+  chair: SV('<rect x="15" y="6" width="18" height="17" rx="4"/><path d="M12 23h24v6H12zM15 29v13M33 29v13"/>'),
+  other: SV('<rect x="9" y="17" width="30" height="18" rx="8"/><path d="M15 35v6M33 35v6M20 26h8"/>')
+};
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+function loadCfg(){
+  try { const o = JSON.parse(localStorage.getItem(KEY + ":cfg") || "null"); if (!o) return;
+    Object.keys(o).forEach(k => { if (k === "prices") { for (const c in o.prices) Object.assign(CONFIG.prices[c], o.prices[c]); } else CONFIG[k] = o[k]; }); } catch(e){}
+}
+function saveCfg(){ try { localStorage.setItem(KEY + ":cfg", JSON.stringify(CONFIG)); } catch(e){} }
+
+// ---------- SEO-страницы (разделы по хэшу) ----------
+const SEO = {
+  "chistka-divana": {cat: "sofa", h1: "Химчистка дивана на дому", desc: "Выездная химчистка диванов: 2 места, 3 места, угловые. Примерная цена сразу, мастер подтвердит запись.",
+    lead: "Чистим диваны у вас дома: прямые на 2 и 3 места и угловые. Цену ориентировочно видно сразу, итог согласует мастер.",
+    faq: [["От чего зависит цена?", "От размера дивана, количества предметов и степени загрязнения. Точную сумму называет мастер после разговора."], ["Как записаться?", "Соберите заказ на странице расчёта и отправьте заявку. Мастер свяжется с вами и согласует время."]]},
+  "chistka-kresla": {cat: "armchair", h1: "Химчистка кресла на дому", desc: "Выездная химчистка кресел, в том числе реклайнеров. Примерная цена сразу, мастер подтвердит запись.",
+    lead: "Чистим обычные кресла и реклайнеры у вас дома. Несколько кресел можно добавить в один заказ.",
+    faq: [["От чего зависит цена?", "От типа кресла и степени загрязнения. Итоговую цену согласует мастер."], ["Можно ли почистить несколько предметов за один выезд?", "Да, добавьте всё в заказ: диван, кресла, матрас, стулья."]]},
+  "chistka-matrasa": {cat: "mattress", h1: "Химчистка матраса на дому", desc: "Выездная химчистка матрасов: односпальных и двуспальных. Можно выбрать чистку второй стороны.",
+    lead: "Чистим односпальные и двуспальные матрасы. При необходимости можно заказать чистку обеих сторон.",
+    faq: [["Чистится ли вторая сторона?", "Да, это отдельная опция в расчёте."], ["Как оценить цену?", "Выберите размер и опции на странице расчёта, итог согласует мастер."]]},
+  "chistka-stula": {cat: "chair", h1: "Химчистка стульев на дому", desc: "Выездная химчистка мягких стульев: сиденье или сиденье со спинкой. Цена за штуку, удобно для комплектов.",
+    lead: "Чистим мягкие стулья: только сиденье или сиденье со спинкой. Цена считается за штуку, удобно для комплектов.",
+    faq: [["Как считается цена?", "За каждый стул по выбранному варианту, с учётом количества."], ["Есть ли минимальный заказ?", "Да, он применяется к стоимости чистки. Подробности на странице тарифов."]]}
+};
+function renderSeo(name, s){
+  const c = s.cat, vars = CATS[c].vars, pr = vars.map(v => unitPrice({cat: c, v: v[0]}));
+  $("seo").innerHTML = '<h1 class="h1s">' + s.h1 + "</h1><p>" + s.lead + '</p><div class="price">от ' + rub(Math.min.apply(null, pr)) + "</div>"
+    + '<ul>' + vars.map(v => "<li>" + v[1] + ": " + rub(unitPrice({cat: c, v: v[0]})) + "</li>").join("") + "</ul>"
+    + "<h2>Как это работает</h2><p>Выберите предмет и вариант на странице расчёта, добавьте в заказ и отправьте заявку. Мастер свяжется с вами, назовёт итоговую цену и согласует время выезда.</p>"
+    + "<h2>Вопросы</h2>" + s.faq.map(f => '<h3 class="h3">' + f[0] + "</h3><p>" + f[1] + "</p>").join("")
+    + '<div class="row"><button class="btn pri" id="seoGo" type="button">Рассчитать стоимость</button></div>';
+  $("seoGo").onclick = () => { S.cat = c; S.v = vars[0][0]; renderPicker(); showModel(); save(); location.hash = "raschet"; };
+}
+
+// ---------- Тарифы ----------
+function renderTariffs(){
+  let h = '<h1 class="h1s">Тарифы</h1><p class="note">Цены ориентировочные: итог согласует мастер после разговора.</p>';
+  Object.keys(CONFIG.prices).forEach(c => {
+    const mat = c === "mattress";
+    h += '<div class="tcat">' + ICON[c] + "<span>" + CATS[c].name + '</span></div><div class="tw"><table><tr><th>Вариант</th><th>Цена</th><th>Сильные загрязнения</th>' + (mat ? "<th>Обе стороны</th>" : "") + "</tr>"
+      + CATS[c].vars.map(v => "<tr><td>" + v[1] + "</td><td>" + rub(unitPrice({cat: c, v: v[0]})) + "</td><td>" + rub(unitPrice({cat: c, v: v[0], heavy: true})) + "</td>" + (mat ? "<td>" + rub(unitPrice({cat: c, v: v[0], side2: true})) + "</td>" : "") + "</tr>").join("") + "</table></div>";
+  });
+  $("tar").innerHTML = h + '<p class="note" style="margin-top:16px">Минимальный заказ на чистку: ' + rub(CONFIG.minOrder) + ". Выезд за город: +" + rub(CONFIG.outTown) + ". Предметы из раздела «Другое» оцениваются по фото.</p>";
+}
+
+// ---------- Кабинет владельца (демо в браузере) ----------
+const ST = {new: "Новая", agreed: "Согласована", done: "Завершена", cancelled: "Отменена"}, RK = KEY + ":reqs";
+let cab = {tab: "reqs", q: "", s: "all"};
+function getReqs(){ try { return JSON.parse(localStorage.getItem(RK) || "[]"); } catch(e){ return []; } }
+function putReqs(a){ try { localStorage.setItem(RK, JSON.stringify(a)); } catch(e){} }
+function authed(){ try { return sessionStorage.getItem(KEY + ":auth") === "1"; } catch(e){ return false; } }
+function reqCard(r){
+  const items = r.items.map(it => itemLabel(it) + (it.cat === "other" ? "" : " × " + it.qty)).join("; ");
+  return '<div class="rq" data-id="' + r.id + '"><div class="row" style="margin:0"><b>' + esc(r.name) + '</b><span class="badge2">' + ST[r.status] + "</span></div>"
+    + '<div class="note">' + esc(r.phone) + ", " + esc(r.addr) + (r.out ? ", выезд за город" : "") + "</div><p>" + esc(items) + "</p>"
+    + '<div class="note">Предварительно: ' + esc(r.est) + (r.date ? ". Пожелание: " + esc(r.date) + (r.time ? " " + esc(r.time) : "") : "") + "</div>"
+    + (r.comm ? '<div class="note">Комментарий клиента: ' + esc(r.comm) + "</div>" : "")
+    + '<div class="grid2"><label class="field"><span>Итоговая цена, ₽</span><input type="number" min="0" data-f="final" value="' + esc(r.final) + '"></label><label class="field"><span>Согласованное время</span><input type="datetime-local" data-f="at" value="' + esc(r.at) + '"></label></div>'
+    + '<label class="field"><span>Статус</span><select data-f="status">' + Object.keys(ST).map(k => '<option value="' + k + '"' + (k === r.status ? " selected" : "") + ">" + ST[k] + "</option>").join("") + "</select></label>"
+    + '<label class="field"><span>Заметка (видна только владельцу)</span><textarea data-f="note">' + esc(r.note) + "</textarea></label>"
+    + '<small class="err" data-e></small><div class="row"><button class="btn pri sm" data-a="save">Сохранить</button><button class="btn sm" data-a="del">Удалить</button></div>'
+    + '<div class="note">' + r.hist.map(esc).join("<br>") + "</div></div>";
+}
+function renderList(){
+  const q = (cab.q || "").toLowerCase(), a = getReqs().filter(r => (cab.s === "all" || r.status === cab.s) && (!q || (r.name + r.phone + r.addr).toLowerCase().includes(q)));
+  $("cabCount").textContent = "Заявок: " + a.length;
+  $("cabList").innerHTML = a.length ? a.map(reqCard).join("") : '<p class="note">Заявок нет. Отправьте заявку на странице «Заявка», и она появится здесь.</p>';
+}
+function tariffForm(){
+  let h = '<div class="grid2">';
+  Object.keys(CONFIG.prices).forEach(c => CATS[c].vars.forEach(v => h += '<label class="field"><span>' + CATS[c].name + ", " + v[1] + ', ₽</span><input type="number" min="0" data-p="' + c + "." + v[0] + '" value="' + CONFIG.prices[c][v[0]] + '"></label>'));
+  [["minOrder", "Минимальный заказ, ₽"], ["outTown", "Выезд за город, ₽"], ["heavyPct", "Сильные загрязнения, %"], ["secondSidePct", "Вторая сторона матраса, %"]].forEach(x => h += '<label class="field"><span>' + x[1] + '</span><input type="number" min="0" data-p="' + x[0] + '" value="' + CONFIG[x[0]] + '"></label>');
+  return h + '</div><small class="err" id="tarErr"></small><div class="row"><button class="btn pri" data-a="saveTar">Сохранить тарифы</button></div><p class="note">Изменения сохраняются в этом браузере. В уже созданных заявках расчёт остаётся прежним.</p>';
+}
+const COF = [["company", "Название"], ["city", "Город"], ["tagline", "Короткое описание"], ["contacts", "Контакты (телефон, мессенджер)"]];
+function renderCabinet(){
+  const box = $("cab");
+  if (!authed()) {
+    box.innerHTML = '<h1 class="h1s">Кабинет</h1><p class="note">Демо-вход: пароль проверяется в браузере и не защищает данные. В версии с сервером вход проверяет сервер. Пароль по умолчанию: owner.</p><label class="field"><span>Пароль</span><input type="password" id="cabPass" autocomplete="current-password"></label><small class="err" id="cabErr"></small><div class="row"><button class="btn pri" data-a="login">Войти</button></div>';
+    return;
+  }
+  box.innerHTML = '<div class="tabs2">' + [["reqs", "Заявки"], ["tar", "Тарифы"], ["co", "Компания"]].map(x => '<button class="tab" data-tab="' + x[0] + '" aria-pressed="' + (cab.tab === x[0]) + '">' + x[1] + "</button>").join("") + '<button class="tab" data-a="logout">Выйти</button></div><div id="cabBody"></div>';
+  const b = $("cabBody");
+  if (cab.tab === "reqs") {
+    b.innerHTML = '<div class="grid2"><label class="field"><span>Поиск</span><input type="text" id="cabQ" value="' + esc(cab.q) + '"></label><label class="field"><span>Статус</span><select id="cabS"><option value="all">Все</option>' + Object.keys(ST).map(k => '<option value="' + k + '">' + ST[k] + "</option>").join("") + '</select></label></div><div class="row"><span class="note" id="cabCount"></span><button class="btn sm" data-a="refresh">Обновить список</button></div><div id="cabList"></div>';
+    $("cabS").value = cab.s; renderList();
+  } else if (cab.tab === "tar") b.innerHTML = tariffForm();
+  else b.innerHTML = COF.map(x => '<label class="field"><span>' + x[1] + '</span><input type="text" data-c="' + x[0] + '" value="' + esc(CONFIG[x[0]]) + '"></label>').join("") + '<div class="row"><button class="btn pri" data-a="saveCo">Сохранить</button></div>';
+}
+function cardAction(btn, a){
+  const card = btn.closest(".rq"), all = getReqs(), i = all.findIndex(r => r.id === card.dataset.id); if (i < 0) return;
+  if (a === "del") {
+    if (btn.dataset.sure !== "1") { btn.dataset.sure = "1"; btn.textContent = "Нажмите ещё раз: заявка и данные удалятся"; return; }
+    all.splice(i, 1); putReqs(all); renderList(); return;
+  }
+  const f = k => card.querySelector('[data-f="' + k + '"]').value, err = card.querySelector("[data-e]"), st = f("status");
+  if (st === "agreed" && (!f("final") || !f("at"))) { err.textContent = "Для статуса «Согласована» укажите цену и время"; return; }
+  err.textContent = ""; all[i].hist.push(new Date().toLocaleString("ru-RU") + ": сохранено, статус «" + ST[st] + "»");
+  Object.assign(all[i], {status: st, final: f("final"), at: f("at"), note: f("note")}); putReqs(all); renderList(); toast("Сохранено", false);
+}
+$("cab").addEventListener("click", e => {
+  const el = e.target.closest("[data-a],[data-tab]"); if (!el) return;
+  if (el.dataset.tab) { cab.tab = el.dataset.tab; renderCabinet(); return; }
+  const a = el.dataset.a;
+  if (a === "login") { if ($("cabPass").value === CONFIG.ownerPassword) { try { sessionStorage.setItem(KEY + ":auth", "1"); } catch(x){} renderCabinet(); } else $("cabErr").textContent = "Неверный пароль"; }
+  else if (a === "logout") { try { sessionStorage.removeItem(KEY + ":auth"); } catch(x){} renderCabinet(); }
+  else if (a === "refresh") renderList();
+  else if (a === "saveTar") {
+    const inp = document.querySelectorAll("#cabBody [data-p]"); let bad = false;
+    inp.forEach(x => { if (x.value === "" || +x.value < 0) bad = true; });
+    if (bad) { $("tarErr").textContent = "Заполните все поля числами от нуля"; return; }
+    inp.forEach(x => { const p = x.dataset.p.split("."); if (p[1]) CONFIG.prices[p[0]][p[1]] = +x.value; else CONFIG[p[0]] = +x.value; });
+    saveCfg(); renderPicker(); renderCart(); applyCompany(); toast("Тарифы сохранены", false);
+  }
+  else if (a === "saveCo") { document.querySelectorAll("#cabBody [data-c]").forEach(x => CONFIG[x.dataset.c] = x.value.trim()); saveCfg(); applyCompany(); toast("Сохранено", false); }
+  else if (a === "save" || a === "del") cardAction(el, a);
+});
+$("cab").addEventListener("input", e => { if (e.target.id === "cabQ") { cab.q = e.target.value; renderList(); } });
+$("cab").addEventListener("change", e => { if (e.target.id === "cabS") { cab.s = e.target.value; renderList(); } });
+
+// ---------- Компания и маршруты ----------
+const DEFAULT_DESC = document.querySelector('meta[name="description"]').content, TITLES = {raschet: "Расчёт стоимости", tarify: "Тарифы", zayavka: "Заявка", kabinet: "Кабинет"};
+function applyCompany(){
+  $("brandName").textContent = CONFIG.company; $("tag").textContent = CONFIG.tagline + " " + CONFIG.city + ".";
+  $("outLbl").textContent = "Выезд за город (+" + rub(CONFIG.outTown) + ")"; $("contacts").textContent = CONFIG.contacts;
+  $("seoLinks").innerHTML = Object.keys(SEO).map(k => '<a href="#' + k + '">' + SEO[k].h1 + "</a>").join("");
+}
+function route(){
+  const name = location.hash.slice(1) || "raschet", seo = SEO[name], view = seo ? "seo" : (TITLES[name] ? name : "raschet");
+  document.body.dataset.view = view;
+  document.querySeleыctorAll("[data-view]").forEach(el => el.hidden = el.dataset.view !== view);
+  document.querySelectorAll("#nav a").forEach(a => { if (a.getAttribute("href") === "#" + view) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
+  if (view === "tarify") renderTariffs(); else if (view === "kabinet") renderCabinet(); else if (seo) renderSeo(name, seo);
+  document.title = (seo ? seo.h1 : TITLES[view]) + " — " + CONFIG.company;
+  document.querySelector('meta[name="description"]').content = seo ? seo.desc : DEFAULT_DESC;
+  window.scrollTo(0, 0); resize();
+}
+window.addEventListener("hashchange", route);
+
+// ---------- Старт ----------
+load(); loadCfg(); applyCompany();
+$("outLbl").textContent = "Выезд за город (+" + rub(CONFIG.outTown) + ")"; $("contacts").textContent = CONFIG.contacts;
+if (!CATS[S.cat]) { S.cat = "sofa"; S.v = "s2"; }
+restoreDraft(); renderPicker(); renderCart(); initGL(); route();
+</script>
+</body>
+</html>
