@@ -253,13 +253,13 @@ footer{border-top:2px dashed #d8e7f3}
   </div>
   <p class="note">Дата и время — пожелание. Мастер подтвердит запись после разговора с вами.</p>
   <label class="field"><span>Комментарий</span><textarea id="comm" placeholder="Опишите пятна, материал или другие пожелания"></textarea></label>
-  <label class="field"><span>Фотографии мебели (до 3 файлов)</span><input type="file" id="photos" accept="image/*" multiple><small class="note">Фотографии помогут мастеру оценить объём работ. Они сохраняются вместе с заявкой в этом браузере.</small><div id="photoPreview" class="photo-grid"></div><small class="err" id="photoErr"></small></label>
+  <label class="field"><span>Фотографии мебели (до 3 файлов)</span><input type="file" id="photos" accept="image/*" multiple><small class="note">Фотографии помогут мастеру оценить объём работ. Они безопасно сохраняются вместе с заявкой на сервере.</small><div id="photoPreview" class="photo-grid"></div><small class="err" id="photoErr"></small></label>
   <label class="chk"><input type="checkbox" id="agree"> <span>Согласен на обработку персональных данных</span></label>
   <small class="err" id="e-agree"></small>
   <div class="row"><div class="note" id="sumLine"></div><button class="btn pri" id="send" type="button">Отправить заявку</button></div>
   <div id="result" hidden style="margin-top:16px">
     <h2>Заявка сформирована</h2>
-    <p class="note">Заявка сохранена в этом браузере и видна в кабинете на этом устройстве. Чтобы отправить её компании, скопируйте текст и передайте владельцу.</p>
+    <p class="note">Заявка будет отправлена и сохранена на сервере.</p>
     <pre id="resText"></pre>
     <div class="row"><button class="btn" id="copy" type="button">Скопировать</button><button class="btn" id="newRequest" type="button">Создать новую заявку</button></div>
   </div>
@@ -278,6 +278,7 @@ footer{border-top:2px dashed #d8e7f3}
 <div class="bar" id="bar" hidden><div><div class="note" id="barN"></div><div class="price" id="barP"></div></div><a class="btn pri" href="#zayavka" style="display:inline-flex;align-items:center;text-decoration:none">Оформить</a></div>
 <div class="toast" id="toast"><span id="toastMsg"></span><button id="undo" type="button">Отменить</button></div>
 
+<script src="/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
 <script>
 // ---------- Настройки компании (меняются здесь) ----------
@@ -295,7 +296,7 @@ const CONFIG = {
   heavyPct: 25,        // сильные загрязнения, процент к цене позиции
   secondSidePct: 40,   // вторая сторона матраса, процент к цене позиции
   outTown: 700,        // фиксированная доплата за выезд за город
-  ownerPassword: "owner" // ДЕМО: настоящий вход проверяет сервер
+  // Вход владельца выполняется через Supabase Auth.
 };
 // Порядок: цена варианта × (1 + загрязнение) × (1 + вторая сторона), округление до 10 ₽ за единицу, затем × количество.
 
@@ -310,6 +311,28 @@ const $ = id => document.getElementById(id);
 const rub = n => n.toLocaleString("ru-RU") + " ₽";
 const hex = c => "#" + c.toString(16).padStart(6, "0");
 const KEY = "oblako:v1";
+const TOKEN_KEY = KEY + ":access";
+let REMOTE_REQS = [];
+const SUPABASE = window.OBLAKO_SUPABASE || {};
+function accessToken(){ try { return sessionStorage.getItem(TOKEN_KEY) || ""; } catch(e) { return ""; } }
+async function apiCall(path, options = {}) {
+  const headers = Object.assign({ "Content-Type": "application/json" }, options.headers || {});
+  if (accessToken()) headers.Authorization = "Bearer " + accessToken();
+  const response = await fetch(path, Object.assign({}, options, { headers }));
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error || "Ошибка сервера (" + response.status + ")");
+  return data;
+}
+async function ownerLogin(email, password) {
+  if (!SUPABASE.url || !SUPABASE.anonKey) throw new Error("Укажите URL и публичный ключ Supabase в config.js");
+  const response = await fetch(SUPABASE.url.replace(/\\/$/, "") + "/auth/v1/token?grant_type=password", {
+    method: "POST", headers: { apikey: SUPABASE.anonKey, "Content-Type": "application/json" }, body: JSON.stringify({ email, password })
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || !data.access_token) throw new Error(data.msg || data.message || "Неверная почта или пароль");
+  sessionStorage.setItem(TOKEN_KEY, data.access_token);
+  try { REMOTE_REQS = await apiCall("/api/requests"); } catch(e) { sessionStorage.removeItem(TOKEN_KEY); throw e; }
+}
 let S = {cart: [], draft: {}, cat: "sofa", v: "s2", heavy: false, side2: false};
 function load(){ try { const r = JSON.parse(localStorage.getItem(KEY) || "null"); if (r) S = Object.assign(S, r); } catch(e){} }
 function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} }
@@ -434,9 +457,9 @@ function photoData(file){ return new Promise((resolve,reject)=>{ const reader=ne
 function renderPhotoPreview(){ const box=$("photoPreview"); box.innerHTML=""; pendingPhotos.forEach((src,i)=>{ const wrap=document.createElement("div"); wrap.className="photo-thumb"; const img=document.createElement("img"); img.src=src; img.alt="Фото мебели "+(i+1); const del=document.createElement("button"); del.type="button"; del.textContent="×"; del.setAttribute("aria-label","Удалить фото"); del.onclick=()=>{pendingPhotos.splice(i,1);renderPhotoPreview();}; wrap.append(img,del); box.appendChild(wrap); }); }
 $("photos").addEventListener("change", async e=>{ const files=Array.from(e.target.files||[]); $("photoErr").textContent=""; if(files.length+pendingPhotos.length>3){$("photoErr").textContent="Можно прикрепить не более 3 фотографий";e.target.value="";return;} try{ for(const file of files){ if(!file.type.startsWith("image/")) continue; if(file.size>12*1024*1024) throw new Error("Каждое фото должно быть меньше 12 МБ"); pendingPhotos.push(await photoData(file)); } renderPhotoPreview(); }catch(err){$("photoErr").textContent=err.message||"Не удалось обработать фотографию";} e.target.value=""; });
 $("out").addEventListener("change", () => { saveDraft(); renderCart(); });
-$("send").onclick = () => {
+$("send").onclick = async () => {
   if (submittingRequest) return;
-  const err = {}, digits = $("phone").value.replace(/\D/g, "");
+  const err = {}, digits = $("phone").value.replace(/\\D/g, "");
   if (!$("name").value.trim()) err.name = "Укажите имя";
   if (digits.length < 10) err.phone = "Введите телефон полностью, не меньше 10 цифр";
   if (!$("addr").value.trim()) err.addr = "Укажите адрес, куда приехать";
@@ -451,12 +474,20 @@ $("send").onclick = () => {
   L.push("", "Имя: " + $("name").value.trim(), "Телефон: " + $("phone").value.trim(), "Адрес: " + $("addr").value.trim());
   if ($("date").value) L.push("Желаемо: " + $("date").value + ($("time").value ? " " + $("time").value : ""));
   if ($("comm").value.trim()) L.push("Комментарий: " + $("comm").value.trim());
-  if (pendingPhotos.length) L.push("Фотографий приложено: " + pendingPhotos.length);
   L.push("", "Итоговую цену и время согласует мастер.");
-  const key = L.join("|") + "|photos:" + pendingPhotos.map(p => p.slice(-72)).join(","), reqs = getReqs();
-  if (!reqs.some(r => r.key === key)) { const created = new Date(); reqs.unshift({id: created.getTime().toString(36) + Math.random().toString(36).slice(2, 6), key: key, createdAt: created.toISOString(), name: $("name").value.trim(), phone: $("phone").value.trim(), addr: $("addr").value.trim(), out: $("out").checked, date: $("date").value, time: $("time").value, comm: $("comm").value.trim(), photos: pendingPhotos.slice(), items: JSON.parse(JSON.stringify(S.cart)), est: totalText(T), status: "new", final: "", at: "", note: "", hist: [created.toLocaleString("ru-RU") + ": заявка создана"]}); putReqs(reqs); }
-  submittingRequest = true; $("send").disabled = true; $("send").textContent = "Заявка уже создана";
-  $("resText").textContent = L.join("\n"); $("result").hidden = false; $("result").scrollIntoView({block: "nearest"});
+  submittingRequest = true; $("send").disabled = true; $("send").textContent = "Отправляем…";
+  try {
+    const created = await apiCall("/api/requests", { method: "POST", body: JSON.stringify({
+      name: $("name").value.trim(), phone: $("phone").value.trim(), addr: $("addr").value.trim(),
+      out: $("out").checked, date: $("date").value, time: $("time").value, comm: $("comm").value.trim(),
+      items: JSON.parse(JSON.stringify(S.cart)), est: totalText(T), photos: pendingPhotos
+    })});
+    $("resText").textContent = L.join("\\n") + "\\n\\nНомер заявки: " + created.id;
+    $("result").querySelector("h2").textContent = "Заявка отправлена";
+    $("result").querySelector("p").textContent = "Заявка и фотографии сохранены на сервере. Владелец увидит их в кабинете.";
+    $("result").hidden = false; $("result").scrollIntoView({block: "nearest"});
+    pendingPhotos = []; $("photos").value = ""; renderPhotoPreview();
+  } catch(e) { submittingRequest = false; $("send").disabled = false; $("send").textContent = "Отправить заявку"; $("photoErr").textContent = e.message; }
 };
 $("newRequest").onclick = () => {
   F.forEach(k => { $(k).value = ""; }); $("out").checked = false; $("agree").checked = false;
@@ -660,11 +691,13 @@ const ICON = {
   other: SV('<rect x="9" y="17" width="30" height="18" rx="8"/><path d="M15 35v6M33 35v6M20 26h8"/>')
 };
 const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
-function loadCfg(){
-  try { const o = JSON.parse(localStorage.getItem(KEY + ":cfg") || "null"); if (!o) return;
-    Object.keys(o).forEach(k => { if (k === "prices") { for (const c in o.prices) Object.assign(CONFIG.prices[c], o.prices[c]); } else CONFIG[k] = o[k]; }); } catch(e){}
+async function loadCfg(){
+  try { const o = await apiCall("/api/settings"); if (o && typeof o === "object") Object.keys(o).forEach(k => {
+    if (k === "prices" && o.prices) { for (const c in o.prices) if (CONFIG.prices[c]) Object.assign(CONFIG.prices[c], o.prices[c]); }
+    else if (["company","city","tagline","contacts","minOrder","heavyPct","secondSidePct","outTown"].includes(k)) CONFIG[k] = o[k];
+  }); } catch(e) { console.warn("Настройки сервера:", e); }
 }
-function saveCfg(){ try { localStorage.setItem(KEY + ":cfg", JSON.stringify(CONFIG)); } catch(e){} }
+async function saveCfg(){ await apiCall("/api/settings", { method: "PUT", body: JSON.stringify(CONFIG) }); }
 
 // ---------- SEO-страницы (разделы по хэшу) ----------
 const SEO = {
@@ -703,11 +736,10 @@ function renderTariffs(){
 }
 
 // ---------- Кабинет владельца (демо в браузере) ----------
-const ST = {new: "Новая", agreed: "Согласована", done: "Завершена", cancelled: "Отменена"}, RK = KEY + ":reqs";
+const ST = {new: "Новая", agreed: "Согласована", done: "Завершена", cancelled: "Отменена"};
 let cab = {tab: "reqs", q: "", s: "all"};
-function getReqs(){ try { return JSON.parse(localStorage.getItem(RK) || "[]"); } catch(e){ return []; } }
-function putReqs(a){ try { localStorage.setItem(RK, JSON.stringify(a)); } catch(e){} }
-function authed(){ try { return sessionStorage.getItem(KEY + ":auth") === "1"; } catch(e){ return false; } }
+function getReqs(){ return REMOTE_REQS; }
+function authed(){ return !!accessToken(); }
 function reqCard(r){
   const photos = Array.isArray(r.photos) && r.photos.length ? '<div class="photo-grid owner-photos">' + r.photos.map((src,i)=>'<a href="' + esc(src) + '" target="_blank" rel="noopener"><img src="' + esc(src) + '" alt="Фото клиента ' + (i+1) + '"></a>').join("") + '</div>' : '<div class="note">Фотографии не приложены</div>';
   const created = r.createdAt ? new Date(r.createdAt).toLocaleString("ru-RU") : (r.hist && r.hist[0] ? r.hist[0] : "Дата не указана");
@@ -725,10 +757,14 @@ function reqCard(r){
     + '<small class="err" data-e></small><div class="row"><button class="btn pri sm" data-a="save">Сохранить</button><button class="btn sm" data-a="del">Удалить</button></div>'
     + '<div class="note">' + (r.hist || []).map(esc).join("<br>") + '</div></div>';
 }
-function renderList(){
-  const q = (cab.q || "").toLowerCase(), a = getReqs().filter(r => (cab.s === "all" || r.status === cab.s) && (!q || (r.name + r.phone + r.addr).toLowerCase().includes(q)));
-  $("cabCount").textContent = "Заявок: " + a.length;
-  $("cabList").innerHTML = a.length ? a.map(reqCard).join("") : '<p class="note">Заявок нет. Отправьте заявку на странице «Заявка», и она появится здесь.</p>';
+async function renderList(){
+  $("cabList").innerHTML = '<p class="note">Загружаем заявки…</p>';
+  try {
+    REMOTE_REQS = await apiCall("/api/requests");
+    const q = (cab.q || "").toLowerCase(), a = getReqs().filter(r => (cab.s === "all" || r.status === cab.s) && (!q || (r.name + r.phone + r.addr).toLowerCase().includes(q)));
+    $("cabCount").textContent = "Заявок: " + a.length;
+    $("cabList").innerHTML = a.length ? a.map(reqCard).join("") : '<p class="note">Заявок пока нет.</p>';
+  } catch(e) { $("cabList").innerHTML = '<p class="err">' + esc(e.message) + '</p>'; }
 }
 function tariffForm(){
   let h = '<div class="grid2">';
@@ -740,7 +776,7 @@ const COF = [["company", "Название"], ["city", "Город"], ["tagline"
 function renderCabinet(){
   const box = $("cab");
   if (!authed()) {
-    box.innerHTML = '<h1 class="h1s">Кабинет</h1><p class="note">Локальный кабинет: заявки и настройки хранятся только в этом браузере. Для безопасного доступа с разных устройств требуется серверная версия.</p><label class="field"><span>Пароль</span><input type="password" id="cabPass" autocomplete="current-password"></label><small class="err" id="cabErr"></small><div class="row"><button class="btn pri" data-a="login">Войти</button></div>';
+    box.innerHTML = '<h1 class="h1s">Кабинет владельца</h1><p class="note">Войдите с почтой и паролем пользователя, созданного в Supabase Auth.</p><label class="field"><span>Электронная почта</span><input type="email" id="cabEmail" autocomplete="username"></label><label class="field"><span>Пароль</span><input type="password" id="cabPass" autocomplete="current-password"></label><small class="err" id="cabErr"></small><div class="row"><button class="btn pri" data-a="login">Войти</button></div>';
     return;
   }
   box.innerHTML = '<div class="tabs2">' + [["reqs", "Заявки"], ["tar", "Тарифы"], ["co", "Компания"]].map(x => '<button class="tab" data-tab="' + x[0] + '" aria-pressed="' + (cab.tab === x[0]) + '">' + x[1] + "</button>").join("") + '<button class="tab" data-a="logout">Выйти</button></div><div id="cabBody"></div>';
@@ -751,32 +787,40 @@ function renderCabinet(){
   } else if (cab.tab === "tar") b.innerHTML = tariffForm();
   else b.innerHTML = COF.map(x => '<label class="field"><span>' + x[1] + '</span><input type="text" data-c="' + x[0] + '" value="' + esc(CONFIG[x[0]]) + '"></label>').join("") + '<div class="row"><button class="btn pri" data-a="saveCo">Сохранить</button></div>';
 }
-function cardAction(btn, a){
-  const card = btn.closest(".rq"), all = getReqs(), i = all.findIndex(r => r.id === card.dataset.id); if (i < 0) return;
+async function cardAction(btn, a){
+  const card = btn.closest(".rq"), id = card.dataset.id;
   if (a === "del") {
     if (btn.dataset.sure !== "1") { btn.dataset.sure = "1"; btn.textContent = "Нажмите ещё раз: заявка и данные удалятся"; return; }
-    all.splice(i, 1); putReqs(all); renderList(); return;
+    try { await apiCall("/api/requests/" + encodeURIComponent(id), { method: "DELETE" }); await renderList(); } catch(e) { card.querySelector("[data-e]").textContent = e.message; }
+    return;
   }
   const f = k => card.querySelector('[data-f="' + k + '"]').value, err = card.querySelector("[data-e]"), st = f("status");
   if (st === "agreed" && (!f("final") || !f("at"))) { err.textContent = "Для статуса «Согласована» укажите цену и время"; return; }
-  err.textContent = ""; all[i].hist.push(new Date().toLocaleString("ru-RU") + ": сохранено, статус «" + ST[st] + "»");
-  Object.assign(all[i], {status: st, final: f("final"), at: f("at"), note: f("note")}); putReqs(all); renderList(); toast("Сохранено", false);
+  err.textContent = "";
+  try {
+    await apiCall("/api/requests/" + encodeURIComponent(id), { method: "PATCH", body: JSON.stringify({ status: st, final: f("final"), at: f("at"), note: f("note") }) });
+    await renderList(); toast("Сохранено на сервере", false);
+  } catch(e) { err.textContent = e.message; }
 }
 $("cab").addEventListener("click", e => {
   const el = e.target.closest("[data-a],[data-tab]"); if (!el) return;
   if (el.dataset.tab) { cab.tab = el.dataset.tab; renderCabinet(); return; }
   const a = el.dataset.a;
-  if (a === "login") { if ($("cabPass").value === CONFIG.ownerPassword) { try { sessionStorage.setItem(KEY + ":auth", "1"); } catch(x){} renderCabinet(); } else $("cabErr").textContent = "Неверный пароль"; }
-  else if (a === "logout") { try { sessionStorage.removeItem(KEY + ":auth"); } catch(x){} renderCabinet(); }
+  if (a === "login") {
+    el.disabled = true;
+    ownerLogin($("cabEmail").value.trim(), $("cabPass").value).then(async () => { await loadCfg(); applyCompany(); renderPicker(); renderCart(); renderCabinet(); })
+      .catch(e => { $("cabErr").textContent = e.message; }).finally(() => { el.disabled = false; });
+  }
+  else if (a === "logout") { sessionStorage.removeItem(TOKEN_KEY); REMOTE_REQS = []; renderCabinet(); }
   else if (a === "refresh") renderList();
   else if (a === "saveTar") {
     const inp = document.querySelectorAll("#cabBody [data-p]"); let bad = false;
     inp.forEach(x => { if (x.value === "" || +x.value < 0) bad = true; });
     if (bad) { $("tarErr").textContent = "Заполните все поля числами от нуля"; return; }
     inp.forEach(x => { const p = x.dataset.p.split("."); if (p[1]) CONFIG.prices[p[0]][p[1]] = +x.value; else CONFIG[p[0]] = +x.value; });
-    saveCfg(); renderPicker(); renderCart(); renderTariffs(); toast("Тарифы сохранены в этом браузере", false);
+    saveCfg().then(() => { renderPicker(); renderCart(); renderTariffs(); toast("Тарифы сохранены на сервере", false); }).catch(e => $("tarErr").textContent = e.message);
   }
-  else if (a === "saveCo") { document.querySelectorAll("#cabBody [data-c]").forEach(x => CONFIG[x.dataset.c] = x.value.trim()); saveCfg(); applyCompany(); toast("Сохранено", false); }
+  else if (a === "saveCo") { document.querySelectorAll("#cabBody [data-c]").forEach(x => CONFIG[x.dataset.c] = x.value.trim()); saveCfg().then(() => { applyCompany(); toast("Сохранено на сервере", false); }).catch(e => toast(e.message, false)); }
   else if (a === "save" || a === "del") cardAction(el, a);
 });
 $("cab").addEventListener("input", e => { if (e.target.id === "cabQ") { cab.q = e.target.value; renderList(); } });
@@ -802,10 +846,13 @@ function route(){
 window.addEventListener("hashchange", route);
 
 // ---------- Старт ----------
-load(); loadCfg(); applyCompany();
-$("outLbl").textContent = "Выезд за город (+" + rub(CONFIG.outTown) + ")"; $("contacts").textContent = CONFIG.contacts;
-if (!CATS[S.cat]) { S.cat = "sofa"; S.v = "s2"; }
-restoreDraft(); renderPicker(); renderCart(); initGL(); route();
+async function bootApp(){
+  load(); await loadCfg(); applyCompany();
+  $("outLbl").textContent = "Выезд за город (+" + rub(CONFIG.outTown) + ")"; $("contacts").textContent = CONFIG.contacts;
+  if (!CATS[S.cat]) { S.cat = "sofa"; S.v = "s2"; }
+  restoreDraft(); renderPicker(); renderCart(); initGL(); route();
+}
+bootApp();
 
 // ---------- PWA: установка и офлайн-оболочка ----------
 if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
