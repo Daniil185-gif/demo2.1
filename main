@@ -8,8 +8,6 @@
 <style>
 :root{--bg:#e8f0f2;--surf:#fff;--ink:#13262c;--mute:#4d6168;--line:#b9cbd1;--acc:#1f7a8c;--acc3:#2aa39a;--acc-ink:#fff;--warn:#b3402a;--stage:#d6eaf0;--stage2:#9ec0cb;--tint:rgba(31,122,140,.1);--chip:rgba(255,255,255,.72);--glow1:rgba(127,214,194,.45);--glow2:rgba(31,122,140,.2);--sh:0 1px 2px rgba(19,38,44,.12),0 12px 32px rgba(19,38,44,.08);
 color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d171a;--surf:#162327;--ink:#e8f2f4;--mute:#94aab1;--line:#2a3e44;--acc:#62c7d8;--acc3:#7fe0cf;--acc-ink:#05222a;--warn:#ff9b84;--stage:#2a4850;--stage2:#111e22;--tint:rgba(98,199,216,.14);--chip:rgba(14,24,27,.6);--glow1:rgba(98,199,216,.12);--glow2:rgba(127,224,207,.07);--sh:0 1px 2px rgba(0,0,0,.4),0 12px 32px rgba(0,0,0,.25);color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0d171a;--surf:#162327;--ink:#e8f2f4;--mute:#94aab1;--line:#2a3e44;--acc:#62c7d8;--acc3:#7fe0cf;--acc-ink:#05222a;--warn:#ff9b84;--stage:#2a4850;--stage2:#111e22;--tint:rgba(98,199,216,.14);--chip:rgba(14,24,27,.6);--glow1:rgba(98,199,216,.12);--glow2:rgba(127,224,207,.07);--sh:0 1px 2px rgba(0,0,0,.4),0 12px 32px rgba(0,0,0,.25);color-scheme:dark}
 *,*::before,*::after{box-sizing:inherit}
 html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
 body{margin:0;min-height:100vh;color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:radial-gradient(820px 380px at 88% -60px,var(--glow1),transparent 70%),radial-gradient(640px 360px at -8% 40px,var(--glow2),transparent 70%),var(--bg)}
@@ -445,7 +443,7 @@ $("send").onclick = () => {
   if ($("comm").value.trim()) L.push("Комментарий: " + $("comm").value.trim());
   if (pendingPhotos.length) L.push("Фотографий приложено: " + pendingPhotos.length);
   L.push("", "Итоговую цену и время согласует мастер.");
-  const key = L.join("|"), reqs = getReqs();
+  const key = L.join("|") + "|photos:" + pendingPhotos.map(p => p.slice(-72)).join(","), reqs = getReqs();
   if (!reqs.length || reqs[0].key !== key) { reqs.unshift({id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), key: key, name: $("name").value.trim(), phone: $("phone").value.trim(), addr: $("addr").value.trim(), out: $("out").checked, date: $("date").value, time: $("time").value, comm: $("comm").value.trim(), photos: pendingPhotos.slice(), items: JSON.parse(JSON.stringify(S.cart)), est: totalText(T), status: "new", final: "", at: "", note: "", hist: [new Date().toLocaleString("ru-RU") + ": заявка создана"]}); putReqs(reqs); }
   $("resText").textContent = L.join("\n"); $("result").hidden = false; $("result").scrollIntoView({block: "nearest"});
 };
