@@ -99,6 +99,7 @@ body{
     linear-gradient(180deg,#f4faff 0%,var(--bg) 60%,#f7fbff 100%);
 }
 .wrap{max-width:1120px;padding-left:20px;padding-right:20px}
+body{background:radial-gradient(ellipse at 8% 8%,rgba(255,213,226,.24),transparent 25%),linear-gradient(180deg,#f7fbff 0%,#eef7ff 62%,#f8fcff 100%)}
 .top{padding:20px 0 14px}
 .brand{font-size:1.5rem;letter-spacing:-.04em;color:#284b70}
 .logo{
@@ -124,16 +125,11 @@ h1,.h1s{color:#254e78;text-wrap:balance}
 }
 .tags li::before{color:#32b99e}
 .stage{
-  border:3px solid rgba(255,255,255,.9);border-radius:32px;
-  background:
-    radial-gradient(ellipse at 18% 18%,rgba(255,255,255,.95) 0 7%,transparent 7.5%),
-    radial-gradient(ellipse at 82% 24%,rgba(255,255,255,.72) 0 9%,transparent 9.5%),
-    linear-gradient(160deg,#e5f7ff 0%,#ccecff 54%,#c8f0e8 100%);
-  box-shadow:0 6px 0 rgba(66,139,185,.09),0 18px 34px rgba(61,125,174,.14);
+  border:3px solid rgba(255,255,255,.96);border-radius:30px;
+  background:linear-gradient(145deg,#edf8ff 0%,#dcefff 55%,#e2f8f0 100%);
+  box-shadow:0 5px 0 rgba(66,139,185,.07),0 14px 28px rgba(61,125,174,.11);
 }
-.stage::after{
-  background:radial-gradient(120% 90% at 50% 40%,transparent 62%,rgba(63,122,163,.10));
-}
+.stage::after{background:none;}
 .badge{
   background:#fff;border:2px solid #e0f0fb;color:#315d84;
   box-shadow:0 4px 12px rgba(51,117,164,.12);
@@ -181,6 +177,11 @@ input[type=checkbox]{accent-color:#42bca8}
 .nav a[aria-current]{background:linear-gradient(135deg,#4d9ce8,#45bfae);color:#fff}
 .item{border-bottom:1px dashed #d7e6f2}
 .rq{border:2px solid #e0edf7;border-radius:20px;background:#f8fbff}
+.photo-grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.photo-thumb{width:92px;height:92px;position:relative;border-radius:15px;overflow:hidden;border:2px solid #dceaf5;background:#fff}
+.photo-thumb img,.owner-photos img{width:100%;height:100%;object-fit:cover;display:block}
+.photo-thumb button{position:absolute;right:4px;top:4px;width:26px;height:26px;border:0;border-radius:50%;background:rgba(28,52,74,.82);color:#fff;font-size:20px;line-height:1;cursor:pointer}
+.owner-photos a{width:112px;height:112px;display:block;border-radius:14px;overflow:hidden;border:2px solid #dceaf5}
 .badge2{background:#e4f7f1;color:#248b78}
 .bar{
   background:rgba(255,255,255,.96);backdrop-filter:blur(14px);
@@ -197,28 +198,13 @@ footer{border-top:2px dashed #d8e7f3}
   .tags li{padding:7px 11px;font-size:.84rem}
   .nav a{padding:8px 13px}
 }
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    --bg:#101d2a;--surf:#192a39;--ink:#e8f3fb;--mute:#a6bac9;--line:#314b60;
-    --acc:#72b9f2;--acc3:#68d6c0;--acc-ink:#10283a;--stage:#29495e;--stage2:#1b3947;
-    --tint:rgba(114,185,242,.16);--chip:rgba(20,37,51,.88);
-    --glow1:rgba(72,154,209,.18);--glow2:rgba(182,104,145,.10);
-    --sh:0 5px 0 rgba(0,0,0,.12),0 14px 30px rgba(0,0,0,.22);
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#101d2a;--surf:#192a39;--ink:#e8f3fb;--mute:#a6bac9;--line:#314b60;
-  --acc:#72b9f2;--acc3:#68d6c0;--acc-ink:#10283a;--stage:#29495e;--stage2:#1b3947;
-  --tint:rgba(114,185,242,.16);--chip:rgba(20,37,51,.88);
-  --glow1:rgba(72,154,209,.18);--glow2:rgba(182,104,145,.10);
-  --sh:0 5px 0 rgba(0,0,0,.12),0 14px 30px rgba(0,0,0,.22);
-}
+/* Светлая тема используется постоянно: переключатель и тёмные переопределения удалены. */
 
 </style>
 </head>
 <body>
 <div class="wrap">
-<header class="top"><div class="brand"><i class="logo"></i><span id="brandName">Облако</span></div><button class="ico" id="theme" type="button" aria-label="Сменить тему">◐</button></header>
+<header class="top"><div class="brand"><i class="logo"></i><span id="brandName">Облако</span></div></header>
 <nav class="nav" id="nav" aria-label="Разделы"><a href="#raschet">Расчёт</a><a href="#tarify">Тарифы</a><a href="#zayavka">Заявка</a><a href="#kabinet">Кабинет</a></nav>
 <div data-view="raschet"><section class="hero">
   <h1>Чистая мягкая мебель без вывоза</h1>
@@ -236,7 +222,7 @@ footer{border-top:2px dashed #d8e7f3}
       <div id="opts"></div>
       <div id="otherBox" hidden>
         <label class="field"><span>Опишите предмет</span><textarea id="otherText" placeholder="Например, пуф из велюра с пятном от кофе"></textarea><small class="err" id="otherErr"></small></label>
-        <p class="note">Фото можно будет приложить в версии с сервером. Стоимость определит мастер.</p>
+        <p class="note">Если предмет нестандартный, приложите фотографии к заявке — мастер оценит стоимость.</p>
       </div>
       <div class="row"><div><div class="price" id="unit"></div><div class="note" id="unitNote"></div></div><button class="btn pri" id="add" type="button">Добавить в заказ</button></div>
     </div>
@@ -259,7 +245,8 @@ footer{border-top:2px dashed #d8e7f3}
     <label class="field"><span>Желаемое время</span><input type="time" id="time"><small class="err" id="e-time"></small></label>
   </div>
   <p class="note">Дата и время — пожелание. Мастер подтвердит запись после разговора с вами.</p>
-  <label class="field"><span>Комментарий</span><textarea id="comm"></textarea></label>
+  <label class="field"><span>Комментарий</span><textarea id="comm" placeholder="Опишите пятна, материал или другие пожелания"></textarea></label>
+  <label class="field"><span>Фотографии мебели (до 3 файлов)</span><input type="file" id="photos" accept="image/*" multiple><small class="note">Фотографии помогут мастеру оценить объём работ. В демо они сохраняются в этом браузере.</small><div id="photoPreview" class="photo-grid"></div><small class="err" id="photoErr"></small></label>
   <label class="chk"><input type="checkbox" id="agree"> <span>Согласен на обработку персональных данных</span></label>
   <small class="err" id="e-agree"></small>
   <div class="row"><div class="note" id="sumLine"></div><button class="btn pri" id="send" type="button">Отправить заявку</button></div>
@@ -432,9 +419,13 @@ function renderSummary(){
 
 // ---------- Форма ----------
 const F = ["name", "phone", "addr", "date", "time", "comm"];
+let pendingPhotos = [];
 function restoreDraft(){ F.forEach(k => { if (S.draft[k]) $(k).value = S.draft[k]; }); $("out").checked = !!S.draft.out; $("agree").checked = !!S.draft.agree; }
 function saveDraft(){ F.forEach(k => S.draft[k] = $(k).value); S.draft.out = $("out").checked; S.draft.agree = $("agree").checked; save(); }
-document.querySelectorAll("#form input,#form textarea").forEach(el => el.addEventListener("input", saveDraft));
+document.querySelectorAll("#form input:not([type=file]),#form textarea").forEach(el => el.addEventListener("input", saveDraft));
+function photoData(file){ return new Promise((resolve,reject)=>{ const reader=new FileReader(); reader.onerror=reject; reader.onload=()=>{ const img=new Image(); img.onerror=reject; img.onload=()=>{ const max=1200, scale=Math.min(1,max/Math.max(img.width,img.height)), c=document.createElement("canvas"); c.width=Math.round(img.width*scale); c.height=Math.round(img.height*scale); c.getContext("2d").drawImage(img,0,0,c.width,c.height); resolve(c.toDataURL("image/jpeg",.76)); }; img.src=reader.result; }; reader.readAsDataURL(file); }); }
+function renderPhotoPreview(){ const box=$("photoPreview"); box.innerHTML=""; pendingPhotos.forEach((src,i)=>{ const wrap=document.createElement("div"); wrap.className="photo-thumb"; const img=document.createElement("img"); img.src=src; img.alt="Фото мебели "+(i+1); const del=document.createElement("button"); del.type="button"; del.textContent="×"; del.setAttribute("aria-label","Удалить фото"); del.onclick=()=>{pendingPhotos.splice(i,1);renderPhotoPreview();}; wrap.append(img,del); box.appendChild(wrap); }); }
+$("photos").addEventListener("change", async e=>{ const files=Array.from(e.target.files||[]); $("photoErr").textContent=""; if(files.length+pendingPhotos.length>3){$("photoErr").textContent="Можно прикрепить не более 3 фотографий";e.target.value="";return;} try{ for(const file of files){ if(!file.type.startsWith("image/")) continue; if(file.size>12*1024*1024) throw new Error("Каждое фото должно быть меньше 12 МБ"); pendingPhotos.push(await photoData(file)); } renderPhotoPreview(); }catch(err){$("photoErr").textContent=err.message||"Не удалось обработать фотографию";} e.target.value=""; });
 $("out").addEventListener("change", () => { saveDraft(); renderCart(); });
 $("send").onclick = () => {
   const err = {}, digits = $("phone").value.replace(/\D/g, "");
@@ -452,21 +443,15 @@ $("send").onclick = () => {
   L.push("", "Имя: " + $("name").value.trim(), "Телефон: " + $("phone").value.trim(), "Адрес: " + $("addr").value.trim());
   if ($("date").value) L.push("Желаемо: " + $("date").value + ($("time").value ? " " + $("time").value : ""));
   if ($("comm").value.trim()) L.push("Комментарий: " + $("comm").value.trim());
+  if (pendingPhotos.length) L.push("Фотографий приложено: " + pendingPhotos.length);
   L.push("", "Итоговую цену и время согласует мастер.");
   const key = L.join("|"), reqs = getReqs();
-  if (!reqs.length || reqs[0].key !== key) { reqs.unshift({id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), key: key, name: $("name").value.trim(), phone: $("phone").value.trim(), addr: $("addr").value.trim(), out: $("out").checked, date: $("date").value, time: $("time").value, comm: $("comm").value.trim(), items: JSON.parse(JSON.stringify(S.cart)), est: totalText(T), status: "new", final: "", at: "", note: "", hist: [new Date().toLocaleString("ru-RU") + ": заявка создана"]}); putReqs(reqs); }
+  if (!reqs.length || reqs[0].key !== key) { reqs.unshift({id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), key: key, name: $("name").value.trim(), phone: $("phone").value.trim(), addr: $("addr").value.trim(), out: $("out").checked, date: $("date").value, time: $("time").value, comm: $("comm").value.trim(), photos: pendingPhotos.slice(), items: JSON.parse(JSON.stringify(S.cart)), est: totalText(T), status: "new", final: "", at: "", note: "", hist: [new Date().toLocaleString("ru-RU") + ": заявка создана"]}); putReqs(reqs); }
   $("resText").textContent = L.join("\n"); $("result").hidden = false; $("result").scrollIntoView({block: "nearest"});
 };
 $("copy").onclick = async () => { try { await navigator.clipboard.writeText($("resText").textContent); toast("Скопировано", false); } catch(e) { toast("Не удалось скопировать, выделите текст вручную", false); } };
 
-// ---------- Тема ----------
-function isDark(){ const t = document.documentElement.dataset.theme; return t ? t === "dark" : matchMedia("(prefers-color-scheme: dark)").matches; }
-$("theme").onclick = () => {
-  const nx = isDark() ? "light" : "dark"; document.documentElement.dataset.theme = nx;
-  try { localStorage.setItem(KEY + ":theme", nx); } catch(e){}
-  recolor();
-};
-try { const t = localStorage.getItem(KEY + ":theme"); if (t) document.documentElement.dataset.theme = t; } catch(e){}
+// Используется только светлая тема.
 
 // ---------- 3D ----------
 let R = null, zoom = 1, floor, group, TEX = [], yaw = .5, pitch = .25, tYaw = .5, tPitch = .25, drag = false, lx = 0, ly = 0, popT = 1;
@@ -490,15 +475,16 @@ function initGL(){
   try {
     if (!window.THREE) throw 0;
     const probe = document.createElement("canvas"); if (!(probe.getContext("webgl") || probe.getContext("experimental-webgl"))) throw 0;
-    const r = new THREE.WebGLRenderer({antialias: true, alpha: true});
-    r.setPixelRatio(Math.min(devicePixelRatio || 1, 2)); r.shadowMap.enabled = true; r.shadowMap.type = THREE.PCFSoftShadowMap;
+    const r = new THREE.WebGLRenderer({antialias: true, alpha: true, powerPreference: "high-performance"});
+    r.setPixelRatio(Math.min(devicePixelRatio || 1, 2.5)); r.outputEncoding = THREE.sRGBEncoding; r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1.12; r.shadowMap.enabled = true; r.shadowMap.type = THREE.PCFSoftShadowMap;
     $("stage").insertBefore(r.domElement, $("stage").firstChild);
     const scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(34, 1, 2, 30);
-    scene.add(new THREE.HemisphereLight(0xffffff, 0x8aa0aa, .85));
-    const d = new THREE.DirectionalLight(0xffffff, .85); d.position.set(3.5, 6, 4); d.castShadow = true;
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x9aabb8, 1.05));
+    const d = new THREE.DirectionalLight(0xffffff, 1.25); d.position.set(3.5, 6, 4); d.castShadow = true;
     d.shadow.mapSize.set(1024, 1024); Object.assign(d.shadow.camera, {left: -4, right: 4, top: 4, bottom: -4, near: .5, far: 16}); d.shadow.bias = -.0004; d.shadow.normalBias = .03; scene.add(d);
-    const f = new THREE.DirectionalLight(0xbfe3ff, .35); f.position.set(-4, 3, -3); scene.add(f);
-    floor = new THREE.Mesh(new THREE.CircleGeometry(2.9, 64), new THREE.MeshStandardMaterial({roughness: 1})); floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
+    const f = new THREE.DirectionalLight(0xd4ecff, .65); f.position.set(-4, 3, -3); scene.add(f);
+    const rim = new THREE.DirectionalLight(0xffffff, .45); rim.position.set(1, 4, -5); scene.add(rim);
+    floor = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), new THREE.MeshStandardMaterial({color: 0xeaf5fb, roughness: 1})); floor.rotation.x = -Math.PI / 2; floor.position.y = -.015; floor.receiveShadow = true; scene.add(floor);
     TEX = [dirtTex(11), dirtTex(23), dirtTex(37)];
     R = {r, scene, cam}; recolor(); resize(); new ResizeObserver(resize).observe($("stage"));
     const st = $("stage");
@@ -520,7 +506,7 @@ function initGL(){
   } catch(e) { R = null; $("poster").style.display = "flex"; }
 }
 function resize(){ if (!R) return; const w = $("stage").clientWidth, h = $("stage").clientHeight; if (!w || !h) return; R.r.setSize(w, h, false); R.cam.aspect = w / h; zoom = Math.max(1, 1.5 / (w / h)); R.cam.updateProjectionMatrix(); }
-function recolor(){ if (floor) floor.material.color.set(isDark() ? 0x34535b : 0xe9f4f6); }
+function recolor(){ if (floor) floor.material.color.set(0xeaf5fb); }
 
 function rb(w, h, d, r, seg){
   seg = seg || 8;
@@ -552,8 +538,8 @@ function face(par, root, x, y, z, s){
 }
 // Размеры подобраны так, чтобы грани соседних деталей не лежали в одной плоскости (иначе текстуры мерцают).
 function buildModel(cat, v){
-  const col = CATS[cat].color, mk = (c, r) => new THREE.MeshStandardMaterial({color: c, roughness: r || .92});
-  const M = mk(col), D = mk(new THREE.Color(col).multiplyScalar(.78)), L = mk(new THREE.Color(col).lerp(new THREE.Color(0xffffff), .28)), W = mk(0x6b4f3a, .5), B = mk(new THREE.Color(col).multiplyScalar(.55), .6);
+  const col = CATS[cat].color, mk = (c, r) => new THREE.MeshStandardMaterial({color: c, roughness: r || .76, metalness: .015});
+  const M = mk(col, .82), D = mk(new THREE.Color(col).multiplyScalar(.78), .86), L = mk(new THREE.Color(col).lerp(new THREE.Color(0xffffff), .32), .9), W = mk(0x76543d, .48), B = mk(new THREE.Color(col).multiplyScalar(.55), .58);
   const g = new THREE.Group(); g.userData.mats = [M, D, L, W, B]; g.userData.fab = [M, L, D];
   const btn = new THREE.SphereGeometry(.04, 10, 8);
   if (cat === "sofa" || cat === "armchair") {
@@ -667,10 +653,11 @@ function putReqs(a){ try { localStorage.setItem(RK, JSON.stringify(a)); } catch(
 function authed(){ try { return sessionStorage.getItem(KEY + ":auth") === "1"; } catch(e){ return false; } }
 function reqCard(r){
   const items = r.items.map(it => itemLabel(it) + (it.cat === "other" ? "" : " × " + it.qty)).join("; ");
+  const photos = Array.isArray(r.photos) && r.photos.length ? '<div class="photo-grid owner-photos">' + r.photos.map((src,i)=>'<a href="' + esc(src) + '" target="_blank" rel="noopener"><img src="' + esc(src) + '" alt="Фото клиента ' + (i+1) + '"></a>').join("") + '</div>' : "";
   return '<div class="rq" data-id="' + r.id + '"><div class="row" style="margin:0"><b>' + esc(r.name) + '</b><span class="badge2">' + ST[r.status] + "</span></div>"
     + '<div class="note">' + esc(r.phone) + ", " + esc(r.addr) + (r.out ? ", выезд за город" : "") + "</div><p>" + esc(items) + "</p>"
     + '<div class="note">Предварительно: ' + esc(r.est) + (r.date ? ". Пожелание: " + esc(r.date) + (r.time ? " " + esc(r.time) : "") : "") + "</div>"
-    + (r.comm ? '<div class="note">Комментарий клиента: ' + esc(r.comm) + "</div>" : "")
+    + (r.comm ? '<div class="note">Комментарий клиента: ' + esc(r.comm) + "</div>" : "") + photos
     + '<div class="grid2"><label class="field"><span>Итоговая цена, ₽</span><input type="number" min="0" data-f="final" value="' + esc(r.final) + '"></label><label class="field"><span>Согласованное время</span><input type="datetime-local" data-f="at" value="' + esc(r.at) + '"></label></div>'
     + '<label class="field"><span>Статус</span><select data-f="status">' + Object.keys(ST).map(k => '<option value="' + k + '"' + (k === r.status ? " selected" : "") + ">" + ST[k] + "</option>").join("") + "</select></label>"
     + '<label class="field"><span>Заметка (видна только владельцу)</span><textarea data-f="note">' + esc(r.note) + "</textarea></label>"
@@ -686,7 +673,7 @@ function tariffForm(){
   let h = '<div class="grid2">';
   Object.keys(CONFIG.prices).forEach(c => CATS[c].vars.forEach(v => h += '<label class="field"><span>' + CATS[c].name + ", " + v[1] + ', ₽</span><input type="number" min="0" data-p="' + c + "." + v[0] + '" value="' + CONFIG.prices[c][v[0]] + '"></label>'));
   [["minOrder", "Минимальный заказ, ₽"], ["outTown", "Выезд за город, ₽"], ["heavyPct", "Сильные загрязнения, %"], ["secondSidePct", "Вторая сторона матраса, %"]].forEach(x => h += '<label class="field"><span>' + x[1] + '</span><input type="number" min="0" data-p="' + x[0] + '" value="' + CONFIG[x[0]] + '"></label>');
-  return h + '</div><small class="err" id="tarErr"></small><div class="row"><button class="btn pri" data-a="saveTar">Сохранить тарифы</button></div><p class="note">Изменения сохраняются в этом браузере. В уже созданных заявках расчёт остаётся прежним.</p>';
+  return h + '</div><small class="err" id="tarErr"></small><div class="row"><button class="btn pri" data-a="saveTar">Сохранить тарифы</button></div><p class="note">Изменения сразу применяются к расчёту в этом браузере. Чтобы новые цены увидели все посетители сайта с разных устройств, потребуется подключить серверное хранилище.</p>';
 }
 const COF = [["company", "Название"], ["city", "Город"], ["tagline", "Короткое описание"], ["contacts", "Контакты (телефон, мессенджер)"]];
 function renderCabinet(){
@@ -726,7 +713,7 @@ $("cab").addEventListener("click", e => {
     inp.forEach(x => { if (x.value === "" || +x.value < 0) bad = true; });
     if (bad) { $("tarErr").textContent = "Заполните все поля числами от нуля"; return; }
     inp.forEach(x => { const p = x.dataset.p.split("."); if (p[1]) CONFIG.prices[p[0]][p[1]] = +x.value; else CONFIG[p[0]] = +x.value; });
-    saveCfg(); renderPicker(); renderCart(); applyCompany(); toast("Тарифы сохранены", false);
+    saveCfg(); renderPicker(); renderCart(); renderTariffs(); toast("Тарифы сохранены в этом браузере", false);
   }
   else if (a === "saveCo") { document.querySelectorAll("#cabBody [data-c]").forEach(x => CONFIG[x.dataset.c] = x.value.trim()); saveCfg(); applyCompany(); toast("Сохранено", false); }
   else if (a === "save" || a === "del") cardAction(el, a);
