@@ -410,7 +410,7 @@ $("cart").onclick = e => {
 function renderSummary(){
   const T = totals(), n = S.cart.reduce((s, i) => s + i.qty, 0);
   $("sumLine").textContent = S.cart.length ? "Предметов: " + n + (T.manual ? "" : ", итого " + rub(T.sum)) : "Добавьте хотя бы одну позицию";
-  $("send").disabled = !S.cart.length; $("bar").hidden = !S.cart.length;
+  $("send").disabled = !S.cart.length || submittingRequest; $("bar").hidden = !S.cart.length;
   $("barN").textContent = "Предметов: " + n; $("barP").textContent = totalText(T);
   $("zsum").textContent = S.cart.length ? "Ваш заказ: " + S.cart.map(i => itemLabel(i) + (i.cat === "other" ? "" : " × " + i.qty)).join("; ") + ". Итого " + totalText(T) + "." : "Заказ пуст. Вернитесь к расчёту и добавьте мебель.";
 }
@@ -445,8 +445,15 @@ $("send").onclick = () => {
   if (pendingPhotos.length) L.push("Фотографий приложено: " + pendingPhotos.length);
   L.push("", "Итоговую цену и время согласует мастер.");
   const key = L.join("|") + "|photos:" + pendingPhotos.map(p => p.slice(-72)).join(","), reqs = getReqs();
-  if (!reqs.length || reqs[0].key !== key) { reqs.unshift({id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), key: key, name: $("name").value.trim(), phone: $("phone").value.trim(), addr: $("addr").value.trim(), out: $("out").checked, date: $("date").value, time: $("time").value, comm: $("comm").value.trim(), photos: pendingPhotos.slice(), items: JSON.parse(JSON.stringify(S.cart)), est: totalText(T), status: "new", final: "", at: "", note: "", hist: [new Date().toLocaleString("ru-RU") + ": заявка создана"]}); putReqs(reqs); }
+  if (!reqs.some(r => r.key === key)) { const created = new Date(); reqs.unshift({id: created.getTime().toString(36) + Math.random().toString(36).slice(2, 6), key: key, createdAt: created.toISOString(), name: $("name").value.trim(), phone: $("phone").value.trim(), addr: $("addr").value.trim(), out: $("out").checked, date: $("date").value, time: $("time").value, comm: $("comm").value.trim(), photos: pendingPhotos.slice(), items: JSON.parse(JSON.stringify(S.cart)), est: totalText(T), status: "new", final: "", at: "", note: "", hist: [created.toLocaleString("ru-RU") + ": заявка создана"]}); putReqs(reqs); }
+  submittingRequest = true; $("send").disabled = true; $("send").textContent = "Заявка уже создана";
   $("resText").textContent = L.join("\n"); $("result").hidden = false; $("result").scrollIntoView({block: "nearest"});
+};
+$("newRequest").onclick = () => {
+  F.forEach(k => { $(k).value = ""; }); $("out").checked = false; $("agree").checked = false;
+  pendingPhotos = []; $("photos").value = ""; renderPhotoPreview(); $("photoErr").textContent = "";
+  ["name", "phone", "addr", "time", "agree"].forEach(k => $("e-" + k).textContent = "");
+  S.draft = {}; save(); submittingRequest = false; $("send").disabled = !S.cart.length; $("send").textContent = "Отправить заявку"; $("result").hidden = true; $("form").scrollIntoView({block: "start"});
 };
 $("copy").onclick = async () => { try { await navigator.clipboard.writeText($("resText").textContent); toast("Скопировано", false); } catch(e) { toast("Не удалось скопировать, выделите текст вручную", false); } };
 
