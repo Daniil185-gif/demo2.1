@@ -1,0 +1,20 @@
+{
+  "name": "Облако — химчистка мебели",
+  "short_name": "Облако",
+  "description": "Расчёт стоимости и оформление заявки на выездную химчистку мебели.",
+  "lang": "ru",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f4faff",
+  "theme_color": "#f4faff",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
