@@ -325,7 +325,8 @@ async function apiCall(path, options = {}) {
 }
 async function ownerLogin(email, password) {
   if (!SUPABASE.url || !SUPABASE.anonKey) throw new Error("Укажите URL и публичный ключ Supabase в config.js");
-  const response = await fetch(SUPABASE.url.replace(/\\/$/, "") + "/auth/v1/token?grant_type=password", {
+  const supabaseUrl = SUPABASE.url.endsWith("/") ? SUPABASE.url.slice(0, -1) : SUPABASE.url;
+  const response = await fetch(supabaseUrl + "/auth/v1/token?grant_type=password",
     method: "POST", headers: { apikey: SUPABASE.anonKey, "Content-Type": "application/json" }, body: JSON.stringify({ email, password })
   });
   const data = await response.json().catch(() => ({}));
