@@ -250,9 +250,9 @@ footer{border-top:2px dashed #d8e7f3}
   <div class="row"><div class="note" id="sumLine"></div><button class="btn pri" id="send" type="button">Отправить заявку</button></div>
   <div id="result" hidden style="margin-top:16px">
     <h2>Заявка сформирована</h2>
-    <p class="note">Демо без сервера: заявка сохранена только в этом браузере и видна в кабинете. Чтобы она дошла до компании, скопируйте текст и отправьте его.</p>
+    <p class="note">Заявка сохранена в этом браузере и видна в кабинете на этом устройстве. Чтобы отправить её компании, скопируйте текст и передайте владельцу.</p>
     <pre id="resText"></pre>
-    <button class="btn" id="copy" type="button">Скопировать</button>
+    <div class="row"><button class="btn" id="copy" type="button">Скопировать</button><button class="btn" id="newRequest" type="button">Создать новую заявку</button></div>
   </div>
 </section>
 </div>
@@ -417,7 +417,7 @@ function renderSummary(){
 
 // ---------- Форма ----------
 const F = ["name", "phone", "addr", "date", "time", "comm"];
-let pendingPhotos = [];
+let pendingPhotos = [], submittingRequest = false;
 function restoreDraft(){ F.forEach(k => { if (S.draft[k]) $(k).value = S.draft[k]; }); $("out").checked = !!S.draft.out; $("agree").checked = !!S.draft.agree; }
 function saveDraft(){ F.forEach(k => S.draft[k] = $(k).value); S.draft.out = $("out").checked; S.draft.agree = $("agree").checked; save(); }
 document.querySelectorAll("#form input:not([type=file]),#form textarea").forEach(el => el.addEventListener("input", saveDraft));
@@ -426,6 +426,7 @@ function renderPhotoPreview(){ const box=$("photoPreview"); box.innerHTML=""; pe
 $("photos").addEventListener("change", async e=>{ const files=Array.from(e.target.files||[]); $("photoErr").textContent=""; if(files.length+pendingPhotos.length>3){$("photoErr").textContent="Можно прикрепить не более 3 фотографий";e.target.value="";return;} try{ for(const file of files){ if(!file.type.startsWith("image/")) continue; if(file.size>12*1024*1024) throw new Error("Каждое фото должно быть меньше 12 МБ"); pendingPhotos.push(await photoData(file)); } renderPhotoPreview(); }catch(err){$("photoErr").textContent=err.message||"Не удалось обработать фотографию";} e.target.value=""; });
 $("out").addEventListener("change", () => { saveDraft(); renderCart(); });
 $("send").onclick = () => {
+  if (submittingRequest) return;
   const err = {}, digits = $("phone").value.replace(/\D/g, "");
   if (!$("name").value.trim()) err.name = "Укажите имя";
   if (digits.length < 10) err.phone = "Введите телефон полностью, не меньше 10 цифр";
@@ -456,13 +457,13 @@ let R = null, zoom = 1, floor, group, TEX = [], yaw = .5, pitch = .25, tYaw = .5
 function dirtTex(seed){
   let s = seed; const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
   const c = document.createElement("canvas"); c.width = c.height = 256; const g = c.getContext("2d");
-  g.fillStyle = "#fff"; g.fillRect(0, 0, 256, 256);
-  for (let i = 0; i < 9; i++) {
-    const x = rnd() * 256, y = rnd() * 256, r = 22 + rnd() * 48, gr = g.createRadialGradient(x, y, 2, x, y, r);
-    gr.addColorStop(0, "rgba(78,52,28,.78)"); gr.addColorStop(.6, "rgba(96,68,38,.4)"); gr.addColorStop(1, "rgba(96,68,38,0)");
-    g.fillStyle = gr; g.fillRect(0, 0, 256, 256);
+  g.fillStyle = "#8e7968"; g.fillRect(0, 0, 256, 256);
+  for (let i = 0; i < 7; i++) {
+    const x = rnd() * 256, y = rnd() * 256, rx = 18 + rnd() * 42, ry = 12 + rnd() * 34, gr = g.createRadialGradient(x, y, 2, x, y, Math.max(rx, ry));
+    gr.addColorStop(0, "rgba(48,31,24,.92)"); gr.addColorStop(.42, "rgba(67,45,32,.78)"); gr.addColorStop(.78, "rgba(111,75,49,.52)"); gr.addColorStop(1, "rgba(111,75,49,0)");
+    g.save(); g.translate(x,y); g.scale(rx/Math.max(rx,ry),ry/Math.max(rx,ry)); g.fillStyle=gr; g.beginPath(); g.arc(0,0,Math.max(rx,ry),0,Math.PI*2); g.fill(); g.restore();
   }
-  for (let i = 0; i < 60; i++) { g.fillStyle = "rgba(60,40,20," + (.25 + rnd() * .4) + ")"; g.beginPath(); g.arc(rnd() * 256, rnd() * 256, 1 + rnd() * 3, 0, 7); g.fill(); }
+  for (let i = 0; i < 95; i++) { g.fillStyle = "rgba(45,31,25," + (.18 + rnd() * .5) + ")"; g.beginPath(); g.ellipse(rnd()*256,rnd()*256,1+rnd()*5,.8+rnd()*2,rnd()*3,0,Math.PI*2); g.fill(); }
   return new THREE.CanvasTexture(c);
 }
 function applyDirt(){
@@ -474,15 +475,15 @@ function initGL(){
     if (!window.THREE) throw 0;
     const probe = document.createElement("canvas"); if (!(probe.getContext("webgl") || probe.getContext("experimental-webgl"))) throw 0;
     const r = new THREE.WebGLRenderer({antialias: true, alpha: true, powerPreference: "high-performance"});
-    r.setPixelRatio(Math.min(devicePixelRatio || 1, 2.5)); r.outputEncoding = THREE.sRGBEncoding; r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1.12; r.shadowMap.enabled = true; r.shadowMap.type = THREE.PCFSoftShadowMap;
+    r.setPixelRatio(Math.min(devicePixelRatio || 1, 2)); r.outputEncoding = THREE.sRGBEncoding; r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = .92; r.shadowMap.enabled = true; r.shadowMap.type = THREE.PCFSoftShadowMap;
     $("stage").insertBefore(r.domElement, $("stage").firstChild);
     const scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(34, 1, 2, 30);
-    scene.add(new THREE.HemisphereLight(0xffffff, 0x9aabb8, 1.05));
-    const d = new THREE.DirectionalLight(0xffffff, 1.25); d.position.set(3.5, 6, 4); d.castShadow = true;
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x758493, .78));
+    const d = new THREE.DirectionalLight(0xfff4e8, 1.05); d.position.set(3.5, 6, 4); d.castShadow = true;
     d.shadow.mapSize.set(1024, 1024); Object.assign(d.shadow.camera, {left: -4, right: 4, top: 4, bottom: -4, near: .5, far: 16}); d.shadow.bias = -.0004; d.shadow.normalBias = .03; scene.add(d);
-    const f = new THREE.DirectionalLight(0xd4ecff, .65); f.position.set(-4, 3, -3); scene.add(f);
-    const rim = new THREE.DirectionalLight(0xffffff, .45); rim.position.set(1, 4, -5); scene.add(rim);
-    floor = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), new THREE.MeshStandardMaterial({color: 0xeaf5fb, roughness: 1})); floor.rotation.x = -Math.PI / 2; floor.position.y = -.015; floor.receiveShadow = true; scene.add(floor);
+    const f = new THREE.DirectionalLight(0x9ec9e8, .38); f.position.set(-4, 3, -3); scene.add(f);
+    const rim = new THREE.DirectionalLight(0xffffff, .28); rim.position.set(1, 4, -5); scene.add(rim);
+    floor = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), new THREE.MeshStandardMaterial({color: 0xcbd9e3, roughness: 1})); floor.rotation.x = -Math.PI / 2; floor.position.y = -.015; floor.receiveShadow = true; scene.add(floor);
     TEX = [dirtTex(11), dirtTex(23), dirtTex(37)];
     R = {r, scene, cam}; recolor(); resize(); new ResizeObserver(resize).observe($("stage"));
     const st = $("stage");
@@ -504,7 +505,7 @@ function initGL(){
   } catch(e) { R = null; $("poster").style.display = "flex"; }
 }
 function resize(){ if (!R) return; const w = $("stage").clientWidth, h = $("stage").clientHeight; if (!w || !h) return; R.r.setSize(w, h, false); R.cam.aspect = w / h; zoom = Math.max(1, 1.5 / (w / h)); R.cam.updateProjectionMatrix(); }
-function recolor(){ if (floor) floor.material.color.set(0xeaf5fb); }
+function recolor(){ if (floor) floor.material.color.set(0xcbd9e3); }
 
 function rb(w, h, d, r, seg){
   seg = seg || 8;
@@ -536,8 +537,9 @@ function face(par, root, x, y, z, s){
 }
 // Размеры подобраны так, чтобы грани соседних деталей не лежали в одной плоскости (иначе текстуры мерцают).
 function buildModel(cat, v){
-  const col = CATS[cat].color, mk = (c, r) => new THREE.MeshStandardMaterial({color: c, roughness: r || .76, metalness: .015});
-  const M = mk(col, .82), D = mk(new THREE.Color(col).multiplyScalar(.78), .86), L = mk(new THREE.Color(col).lerp(new THREE.Color(0xffffff), .32), .9), W = mk(0x76543d, .48), B = mk(new THREE.Color(col).multiplyScalar(.55), .58);
+  const col = CATS[cat].color, mk = (c, r) => new THREE.MeshStandardMaterial({color: c, roughness: r || .82, metalness: .01});
+  const base = new THREE.Color(col).multiplyScalar(1.12);
+  const M = mk(base, .88), D = mk(new THREE.Color(col).multiplyScalar(.66), .9), L = mk(new THREE.Color(col).lerp(new THREE.Color(0xffffff), .18), .94), W = mk(0x60432f, .52), B = mk(new THREE.Color(col).multiplyScalar(.43), .62);
   const g = new THREE.Group(); g.userData.mats = [M, D, L, W, B]; g.userData.fab = [M, L, D];
   const btn = new THREE.SphereGeometry(.04, 10, 8);
   if (cat === "sofa" || cat === "armchair") {
