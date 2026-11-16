@@ -574,7 +574,7 @@ function buildModel(cat, v){
   const base = new THREE.Color(col).multiplyScalar(1.12);
   const M = mk(base, .88), D = mk(new THREE.Color(col).multiplyScalar(.66), .9), L = mk(new THREE.Color(col).lerp(new THREE.Color(0xffffff), .18), .94), W = mk(0x60432f, .52), B = mk(new THREE.Color(col).multiplyScalar(.43), .62);
   const weave = fabricBumpTex(cat === "sofa" ? 17 : cat === "armchair" ? 29 : cat === "mattress" ? 41 : 53);
-  [M,D,L].forEach(m => { m.bumpMap = weave; m.bumpScale = .045; m.roughness = .96; });
+  [M,D,L].forEach(m => { m.bumpMap = weave; m.bumpScale = .045; m.roughness = .96; }); g.userData.textures = [weave];
   const g = new THREE.Group(); g.userData.mats = [M, D, L, W, B]; g.userData.fab = [M, L, D];
   const btn = new THREE.SphereGeometry(.04, 10, 8);
   if (cat === "sofa" || cat === "armchair") {
@@ -645,7 +645,7 @@ function buildModel(cat, v){
 }
 function showModel(){
   if (!R) return;
-  if (group) { R.scene.remove(group); group.traverse(o => { if (o.geometry) o.geometry.dispose(); }); group.userData.mats.forEach(m => m.dispose()); }
+  if (group) { R.scene.remove(group); group.traverse(o => { if (o.geometry) o.geometry.dispose(); }); group.userData.mats.forEach(m => m.dispose()); (group.userData.textures || []).forEach(t => t.dispose()); }
   group = buildModel(S.cat, S.v); R.scene.add(group); popT = 0; applyDirt();
 }
 
