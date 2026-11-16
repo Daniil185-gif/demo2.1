@@ -771,7 +771,7 @@ function tariffForm(){
   let h = '<div class="grid2">';
   Object.keys(CONFIG.prices).forEach(c => CATS[c].vars.forEach(v => h += '<label class="field"><span>' + CATS[c].name + ", " + v[1] + ', ₽</span><input type="number" min="0" data-p="' + c + "." + v[0] + '" value="' + CONFIG.prices[c][v[0]] + '"></label>'));
   [["minOrder", "Минимальный заказ, ₽"], ["outTown", "Выезд за город, ₽"], ["heavyPct", "Сильные загрязнения, %"], ["secondSidePct", "Вторая сторона матраса, %"]].forEach(x => h += '<label class="field"><span>' + x[1] + '</span><input type="number" min="0" data-p="' + x[0] + '" value="' + CONFIG[x[0]] + '"></label>');
-  return h + '</div><small class="err" id="tarErr"></small><div class="row"><button class="btn pri" data-a="saveTar">Сохранить тарифы</button></div><p class="note">Изменения сразу применяются к расчёту в этом браузере. Чтобы новые цены увидели все посетители сайта с разных устройств, потребуется подключить серверное хранилище.</p>';
+  return h + '</div><small class="err" id="tarErr"></small><div class="row"><button class="btn pri" data-a="saveTar">Сохранить тарифы</button></div><p class="note">Изменения сохраняются на сервере и применяются для всех посетителей сайта.</p>';
 }
 const COF = [["company", "Название"], ["city", "Город"], ["tagline", "Короткое описание"], ["contacts", "Контакты (телефон, мессенджер)"]];
 function renderCabinet(){
