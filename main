@@ -253,7 +253,7 @@ footer{border-top:2px dashed #d8e7f3}
   </div>
   <p class="note">Дата и время — пожелание. Мастер подтвердит запись после разговора с вами.</p>
   <label class="field"><span>Комментарий</span><textarea id="comm" placeholder="Опишите пятна, материал или другие пожелания"></textarea></label>
-  <label class="field"><span>Фотографии мебели (до 3 файлов)</span><input type="file" id="photos" accept="image/*" multiple><small class="note">Фотографии помогут мастеру оценить объём работ. В демо они сохраняются в этом браузере.</small><div id="photoPreview" class="photo-grid"></div><small class="err" id="photoErr"></small></label>
+  <label class="field"><span>Фотографии мебели (до 3 файлов)</span><input type="file" id="photos" accept="image/*" multiple><small class="note">Фотографии помогут мастеру оценить объём работ. Они сохраняются вместе с заявкой в этом браузере.</small><div id="photoPreview" class="photo-grid"></div><small class="err" id="photoErr"></small></label>
   <label class="chk"><input type="checkbox" id="agree"> <span>Согласен на обработку персональных данных</span></label>
   <small class="err" id="e-agree"></small>
   <div class="row"><div class="note" id="sumLine"></div><button class="btn pri" id="send" type="button">Отправить заявку</button></div>
@@ -270,7 +270,7 @@ footer{border-top:2px dashed #d8e7f3}
 <div data-view="seo" hidden><section class="panel" id="seo"></section></div>
 
 <footer>
-  <p>Цены и условия задаются в настройках CONFIG в начале скрипта. Итоговую цену и время согласует мастер.</p>
+  <p>Предварительную стоимость и время выезда мастер подтвердит после получения заявки.</p>
   <p id="contacts"></p><p id="seoLinks"></p>
   <p>3D-модели собраны из геометрии Three.js (лицензия MIT), внешних моделей нет.</p>
 </footer>
@@ -740,7 +740,7 @@ const COF = [["company", "Название"], ["city", "Город"], ["tagline"
 function renderCabinet(){
   const box = $("cab");
   if (!authed()) {
-    box.innerHTML = '<h1 class="h1s">Кабинет</h1><p class="note">Демо-вход: пароль проверяется в браузере и не защищает данные. В версии с сервером вход проверяет сервер. Пароль по умолчанию: owner.</p><label class="field"><span>Пароль</span><input type="password" id="cabPass" autocomplete="current-password"></label><small class="err" id="cabErr"></small><div class="row"><button class="btn pri" data-a="login">Войти</button></div>';
+    box.innerHTML = '<h1 class="h1s">Кабинет</h1><p class="note">Локальный кабинет: заявки и настройки хранятся только в этом браузере. Для безопасного доступа с разных устройств требуется серверная версия.</p><label class="field"><span>Пароль</span><input type="password" id="cabPass" autocomplete="current-password"></label><small class="err" id="cabErr"></small><div class="row"><button class="btn pri" data-a="login">Войти</button></div>';
     return;
   }
   box.innerHTML = '<div class="tabs2">' + [["reqs", "Заявки"], ["tar", "Тарифы"], ["co", "Компания"]].map(x => '<button class="tab" data-tab="' + x[0] + '" aria-pressed="' + (cab.tab === x[0]) + '">' + x[1] + "</button>").join("") + '<button class="tab" data-a="logout">Выйти</button></div><div id="cabBody"></div>';
