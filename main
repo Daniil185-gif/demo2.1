@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Облако — выездная химчистка мягкой мебели</title>
 <meta name="description" content="Выездная химчистка мягкой мебели: диваны, кресла, матрасы, стулья. Примерная цена сразу, мастер подтвердит запись.">
+<meta name="theme-color" content="#f4faff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Облако">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/icons/icon.svg">
 <style>
 :root{--bg:#e8f0f2;--surf:#fff;--ink:#13262c;--mute:#4d6168;--line:#b9cbd1;--acc:#1f7a8c;--acc3:#2aa39a;--acc-ink:#fff;--warn:#b3402a;--stage:#d6eaf0;--stage2:#9ec0cb;--tint:rgba(31,122,140,.1);--chip:rgba(255,255,255,.72);--glow1:rgba(127,214,194,.45);--glow2:rgba(31,122,140,.2);--sh:0 1px 2px rgba(19,38,44,.12),0 12px 32px rgba(19,38,44,.08);
 color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -13,6 +20,8 @@ html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
 body{margin:0;min-height:100vh;color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:radial-gradient(820px 380px at 88% -60px,var(--glow1),transparent 70%),radial-gradient(640px 360px at -8% 40px,var(--glow2),transparent 70%),var(--bg)}
 .wrap{max-width:1060px;margin:0 auto;padding:0 18px 110px}
 .top{display:flex;align-items:center;justify-content:space-between;padding:16px 0}
+.install-app{border:0;border-radius:14px;padding:10px 14px;background:linear-gradient(135deg,#4c9bea,#48c9ad);color:#fff;font:inherit;font-weight:750;box-shadow:0 4px 0 #3187b8;cursor:pointer}
+.install-app[hidden]{display:none}
 .brand{display:flex;align-items:center;gap:10px;font-size:1.4rem;font-weight:800;letter-spacing:-.03em}
 .logo{width:32px;height:32px;border-radius:50% 50% 50% 12%;background:linear-gradient(135deg,var(--acc),var(--acc3));box-shadow:0 4px 12px rgba(31,122,140,.35)}
 .ico{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surf);color:var(--ink);font-size:1.2rem;cursor:pointer;box-shadow:var(--sh)}
@@ -202,7 +211,7 @@ footer{border-top:2px dashed #d8e7f3}
 </head>
 <body>
 <div class="wrap">
-<header class="top"><div class="brand"><i class="logo"></i><span id="brandName">Облако</span></div></header>
+<header class="top"><div class="brand"><i class="logo"></i><span id="brandName">Облако</span></div><button class="install-app" id="installApp" type="button" hidden>Установить</button></header>
 <nav class="nav" id="nav" aria-label="Разделы"><a href="#raschet">Расчёт</a><a href="#tarify">Тарифы</a><a href="#zayavka">Заявка</a><a href="#kabinet">Кабинет</a></nav>
 <div data-view="raschet"><section class="hero">
   <h1>Чистая мягкая мебель без вывоза</h1>
@@ -461,6 +470,23 @@ $("copy").onclick = async () => { try { await navigator.clipboard.writeText($("r
 
 // ---------- 3D ----------
 let R = null, zoom = 1, floor, group, TEX = [], yaw = .5, pitch = .25, tYaw = .5, tPitch = .25, drag = false, lx = 0, ly = 0, popT = 1;
+function fabricBumpTex(seed){
+  let s = seed; const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
+  const c = document.createElement("canvas"); c.width = c.height = 512;
+  const g = c.getContext("2d"); g.fillStyle = "#888"; g.fillRect(0,0,512,512);
+  for(let y=0;y<512;y+=3){
+    g.fillStyle = "rgba(255,255,255," + (.035+rnd()*.035) + ")";
+    g.fillRect(0,y,512,1);
+    g.fillStyle = "rgba(0,0,0," + (.025+rnd()*.03) + ")";
+    g.fillRect(0,y+1,512,1);
+  }
+  for(let i=0;i<18000;i++){
+    const v = rnd()>.5 ? 255 : 20;
+    g.fillStyle = "rgba("+v+","+v+","+v+",.10)";
+    g.fillRect(rnd()*512,rnd()*512,1+rnd()*2,1);
+  }
+  const t = new THREE.CanvasTexture(c); t.wrapS=t.wrapT=THREE.RepeatWrapping; t.repeat.set(2.5,2.5); t.anisotropy=4; return t;
+}
 function dirtTex(seed){
   let s = seed; const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
   const c = document.createElement("canvas"); c.width = c.height = 256; const g = c.getContext("2d");
@@ -547,13 +573,24 @@ function buildModel(cat, v){
   const col = CATS[cat].color, mk = (c, r) => new THREE.MeshStandardMaterial({color: c, roughness: r || .82, metalness: .01});
   const base = new THREE.Color(col).multiplyScalar(1.12);
   const M = mk(base, .88), D = mk(new THREE.Color(col).multiplyScalar(.66), .9), L = mk(new THREE.Color(col).lerp(new THREE.Color(0xffffff), .18), .94), W = mk(0x60432f, .52), B = mk(new THREE.Color(col).multiplyScalar(.43), .62);
+  const weave = fabricBumpTex(cat === "sofa" ? 17 : cat === "armchair" ? 29 : cat === "mattress" ? 41 : 53);
+  [M,D,L].forEach(m => { m.bumpMap = weave; m.bumpScale = .045; m.roughness = .96; });
   const g = new THREE.Group(); g.userData.mats = [M, D, L, W, B]; g.userData.fab = [M, L, D];
   const btn = new THREE.SphereGeometry(.04, 10, 8);
   if (cat === "sofa" || cat === "armchair") {
     const sofa = cat === "sofa", rec = v === "recl", corner = v === "corner";
     const n = !sofa ? 1 : (v === "s3" ? 3 : 2), cw = sofa ? 1.0 : 1.05, seatW = n * cw, arm = .34, w = seatW + 2 * arm, tilt = rec ? .34 : .12;
     put(g, rb(w - .04, .36, 1.24, .08), D, 0, .42, 0);
-    for (let i = 0; i < n; i++) put(g, rb(cw - .03, .3, 1.0, .13), M, (i - (n - 1) / 2) * cw, .76, .1);
+    for (let i = 0; i < n; i++) {
+      const sx = (i - (n - 1) / 2) * cw;
+      put(g, rb(cw - .03, .3, 1.0, .13, 14), M, sx, .76, .1);
+      const piping = new THREE.MeshStandardMaterial({color:new THREE.Color(col).multiplyScalar(.72),roughness:.78});
+      g.userData.mats.push(piping);
+      const seam = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([
+        new THREE.Vector3(sx-cw*.39,.89,.59),new THREE.Vector3(sx,.89,.61),new THREE.Vector3(sx+cw*.39,.89,.59)
+      ]),28,.012,8,false),piping);
+      seam.castShadow=true; g.add(seam);
+    }
     const nb = n === 3 ? 3 : 1, bw = seatW / nb; let host = null;
     for (let i = 0; i < nb; i++) { const bc = put(g, rb(bw - .03, .84, .34, .15), L, (i - (nb - 1) / 2) * bw, 1.2, -.42, -tilt); if (i === (nb - 1) / 2) host = bc; }
     put(g, rb(w - .06, 1.1, .3, .1), D, 0, 1.0, -.6, rec ? -.2 : 0);
@@ -591,6 +628,18 @@ function buildModel(cat, v){
     const bd = put(g, rb(1.5, .9, 1.5, .38, 12), M, 0, .55, 0); put(g, btn, B, 0, 1.0, 0);
     legs(g, W, [[-.5, -.5], [.5, -.5], [-.5, .5], [.5, .5]], .15);
     face(bd, g, 0, 0, .75, 1);
+  }
+  // Тонкая декоративная окантовка подчёркивает объём и отделяет мягкие детали.
+  if (cat === "sofa" || cat === "armchair") {
+    const stitchMat = new THREE.MeshStandardMaterial({color:new THREE.Color(col).multiplyScalar(.72),roughness:.9});
+    g.userData.mats.push(stitchMat);
+    for(let side of [-1,1]){
+      const x = side * (seatW/2 + arm*.5);
+      const line = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([
+        new THREE.Vector3(x,.35,.55),new THREE.Vector3(x,.36,.15),new THREE.Vector3(x,.35,-.48)
+      ]),18,.009,6,false),stitchMat);
+      line.castShadow=true; g.add(line);
+    }
   }
   return g;
 }
@@ -756,6 +805,23 @@ load(); loadCfg(); applyCompany();
 $("outLbl").textContent = "Выезд за город (+" + rub(CONFIG.outTown) + ")"; $("contacts").textContent = CONFIG.contacts;
 if (!CATS[S.cat]) { S.cat = "sofa"; S.v = "s2"; }
 restoreDraft(); renderPicker(); renderCart(); initGL(); route();
+
+// ---------- PWA: установка и офлайн-оболочка ----------
+if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(() => {}));
+}
+let deferredInstallPrompt = null;
+const installButton = $("installApp");
+window.addEventListener("beforeinstallprompt", e => {
+  e.preventDefault(); deferredInstallPrompt = e; installButton.hidden = false;
+});
+installButton.addEventListener("click", async () => {
+  if (!deferredInstallPrompt) return;
+  deferredInstallPrompt.prompt();
+  await deferredInstallPrompt.userChoice;
+  deferredInstallPrompt = null; installButton.hidden = true;
+});
+window.addEventListener("appinstalled", () => { installButton.hidden = true; });
 </script>
 </body>
 </html>
