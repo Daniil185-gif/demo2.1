@@ -326,7 +326,7 @@ async function apiCall(path, options = {}) {
 async function ownerLogin(email, password) {
   if (!SUPABASE.url || !SUPABASE.anonKey) throw new Error("Укажите URL и публичный ключ Supabase в config.js");
   const supabaseUrl = SUPABASE.url.endsWith("/") ? SUPABASE.url.slice(0, -1) : SUPABASE.url;
-  const response = await fetch(supabaseUrl + "/auth/v1/token?grant_type=password",
+  const response = await fetch(supabaseUrl + "/auth/v1/token?grant_type=password", {
     method: "POST", headers: { apikey: SUPABASE.anonKey, "Content-Type": "application/json" }, body: JSON.stringify({ email, password })
   });
   const data = await response.json().catch(() => ({}));
@@ -460,7 +460,7 @@ $("photos").addEventListener("change", async e=>{ const files=Array.from(e.targe
 $("out").addEventListener("change", () => { saveDraft(); renderCart(); });
 $("send").onclick = async () => {
   if (submittingRequest) return;
-  const err = {}, digits = $("phone").value.replace(/\\D/g, "");
+  const err = {}, digits = $("phone").value.replace(/\D/g, "");
   if (!$("name").value.trim()) err.name = "Укажите имя";
   if (digits.length < 10) err.phone = "Введите телефон полностью, не меньше 10 цифр";
   if (!$("addr").value.trim()) err.addr = "Укажите адрес, куда приехать";
@@ -483,7 +483,7 @@ $("send").onclick = async () => {
       out: $("out").checked, date: $("date").value, time: $("time").value, comm: $("comm").value.trim(),
       items: JSON.parse(JSON.stringify(S.cart)), est: totalText(T), photos: pendingPhotos
     })});
-    $("resText").textContent = L.join("\\n") + "\\n\\nНомер заявки: " + created.id;
+    $("resText").textContent = L.join("\n") + "\n\nНомер заявки: " + created.id;
     $("result").querySelector("h2").textContent = "Заявка отправлена";
     $("result").querySelector("p").textContent = "Заявка и фотографии сохранены на сервере. Владелец увидит их в кабинете.";
     $("result").hidden = false; $("result").scrollIntoView({block: "nearest"});
