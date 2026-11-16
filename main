@@ -278,8 +278,7 @@ footer{border-top:2px dashed #d8e7f3}
 <div class="bar" id="bar" hidden><div><div class="note" id="barN"></div><div class="price" id="barP"></div></div><a class="btn pri" href="#zayavka" style="display:inline-flex;align-items:center;text-decoration:none">Оформить</a></div>
 <div class="toast" id="toast"><span id="toastMsg"></span><button id="undo" type="button">Отменить</button></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script>if(!window.THREE)document.write('<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"><\\/script>');</script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
 <script>
 // ---------- Настройки компании (меняются здесь) ----------
 const CONFIG = {
