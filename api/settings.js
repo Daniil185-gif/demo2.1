@@ -17,7 +17,7 @@ module.exports = async (req, res) => {
     const value = req.body || {};
     const safe = Object.assign({}, DEFAULTS, value, { ownerPassword: undefined });
     delete safe.ownerPassword;
-    await rest("/rest/v1/settings?id=eq.main", { method: "POST", headers: { Prefer: "resolution=merge-duplicates,return=minimal" }, body: JSON.stringify({ id: "main", value: safe }) });
+    await rest("/rest/v1/settings?on_conflict=id", { method: "POST", headers: { Prefer: "resolution=merge-duplicates,return=minimal" }, body: JSON.stringify({ id: "main", value: safe }) });
     return json(res, 200, { ok: true });
   } catch (e) { return json(res, 500, { error: e.message || "Ошибка сервера" }); }
 };
