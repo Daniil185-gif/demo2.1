@@ -652,17 +652,21 @@ function getReqs(){ try { return JSON.parse(localStorage.getItem(RK) || "[]"); }
 function putReqs(a){ try { localStorage.setItem(RK, JSON.stringify(a)); } catch(e){} }
 function authed(){ try { return sessionStorage.getItem(KEY + ":auth") === "1"; } catch(e){ return false; } }
 function reqCard(r){
-  const items = r.items.map(it => itemLabel(it) + (it.cat === "other" ? "" : " × " + it.qty)).join("; ");
-  const photos = Array.isArray(r.photos) && r.photos.length ? '<div class="photo-grid owner-photos">' + r.photos.map((src,i)=>'<a href="' + esc(src) + '" target="_blank" rel="noopener"><img src="' + esc(src) + '" alt="Фото клиента ' + (i+1) + '"></a>').join("") + '</div>' : "";
-  return '<div class="rq" data-id="' + r.id + '"><div class="row" style="margin:0"><b>' + esc(r.name) + '</b><span class="badge2">' + ST[r.status] + "</span></div>"
-    + '<div class="note">' + esc(r.phone) + ", " + esc(r.addr) + (r.out ? ", выезд за город" : "") + "</div><p>" + esc(items) + "</p>"
-    + '<div class="note">Предварительно: ' + esc(r.est) + (r.date ? ". Пожелание: " + esc(r.date) + (r.time ? " " + esc(r.time) : "") : "") + "</div>"
-    + (r.comm ? '<div class="note">Комментарий клиента: ' + esc(r.comm) + "</div>" : "") + photos
+  const photos = Array.isArray(r.photos) && r.photos.length ? '<div class="photo-grid owner-photos">' + r.photos.map((src,i)=>'<a href="' + esc(src) + '" target="_blank" rel="noopener"><img src="' + esc(src) + '" alt="Фото клиента ' + (i+1) + '"></a>').join("") + '</div>' : '<div class="note">Фотографии не приложены</div>';
+  const created = r.createdAt ? new Date(r.createdAt).toLocaleString("ru-RU") : (r.hist && r.hist[0] ? r.hist[0] : "Дата не указана");
+  const wanted = (r.date || "Дата не указана") + " · " + (r.time || "Время не указано");
+  const itemDetails = (r.items || []).map(it => '<li>' + esc(itemLabel(it)) + (it.cat === "other" ? "" : " — " + esc(it.qty) + " шт.") + '</li>').join("");
+  return '<div class="rq" data-id="' + esc(r.id) + '"><div class="row" style="margin:0"><b>Заявка от ' + esc(created) + '</b><span class="badge2">' + (ST[r.status] || "Новая") + '</span></div>'
+    + '<div class="rq-section"><b>Контакты клиента</b><div>Имя: ' + esc(r.name) + '</div><div>Телефон: ' + esc(r.phone) + '</div><div>Адрес выезда: ' + esc(r.addr) + '</div><div>Выезд за город: ' + (r.out ? "Да" : "Нет") + '</div></div>'
+    + '<div class="rq-section"><b>Когда клиенту удобно</b><div>' + esc(wanted) + '</div><small>Это пожелание клиента, не подтверждённая запись.</small></div>'
+    + '<div class="rq-section"><b>Что выбрал клиент</b><ul>' + itemDetails + '</ul><div>Предварительная стоимость: <b>' + esc(r.est) + '</b></div></div>'
+    + '<div class="rq-section"><b>Фотографии</b>' + photos + '</div>'
+    + '<div class="rq-section"><b>Комментарий клиента</b><div>' + (r.comm ? esc(r.comm) : "Не оставлен") + '</div></div>'
     + '<div class="grid2"><label class="field"><span>Итоговая цена, ₽</span><input type="number" min="0" data-f="final" value="' + esc(r.final) + '"></label><label class="field"><span>Согласованное время</span><input type="datetime-local" data-f="at" value="' + esc(r.at) + '"></label></div>'
     + '<label class="field"><span>Статус</span><select data-f="status">' + Object.keys(ST).map(k => '<option value="' + k + '"' + (k === r.status ? " selected" : "") + ">" + ST[k] + "</option>").join("") + "</select></label>"
     + '<label class="field"><span>Заметка (видна только владельцу)</span><textarea data-f="note">' + esc(r.note) + "</textarea></label>"
     + '<small class="err" data-e></small><div class="row"><button class="btn pri sm" data-a="save">Сохранить</button><button class="btn sm" data-a="del">Удалить</button></div>'
-    + '<div class="note">' + r.hist.map(esc).join("<br>") + "</div></div>";
+    + '<div class="note">' + (r.hist || []).map(esc).join("<br>") + '</div></div>';
 }
 function renderList(){
   const q = (cab.q || "").toLowerCase(), a = getReqs().filter(r => (cab.s === "all" || r.status === cab.s) && (!q || (r.name + r.phone + r.addr).toLowerCase().includes(q)));
