@@ -21,3 +21,13 @@ revoke all on public.settings from anon, authenticated;
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values ('request-photos','request-photos',false,5242880,array['image/jpeg','image/png','image/webp'])
 on conflict (id) do update set public=false, file_size_limit=5242880, allowed_mime_types=array['image/jpeg','image/png','image/webp'];
+
+-- Единственный владелец конкретной установки сайта.
+-- Запись id=1 создаётся автоматически при первой настройке кабинета.
+create table if not exists public.owners (
+  id integer primary key check (id = 1),
+  email text not null unique,
+  created_at timestamptz not null default now()
+);
+alter table public.owners enable row level security;
+revoke all on public.owners from anon, authenticated;
