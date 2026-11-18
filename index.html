@@ -313,6 +313,8 @@ const hex = c => "#" + c.toString(16).padStart(6, "0");
 const KEY = "oblako:v1";
 const TOKEN_KEY = KEY + ":access";
 let REMOTE_REQS = [];
+let OWNER_SETUP_STATE = null;
+let OWNER_SETUP_CHECKING = false;
 const SUPABASE = window.OBLAKO_SUPABASE || {};
 function accessToken(){ try { return sessionStorage.getItem(TOKEN_KEY) || ""; } catch(e) { return ""; } }
 async function apiCall(path, options = {}) {
@@ -777,7 +779,26 @@ const COF = [["company", "Название"], ["city", "Город"], ["tagline"
 function renderCabinet(){
   const box = $("cab");
   if (!authed()) {
-    box.innerHTML = '<h1 class="h1s">Кабинет владельца</h1><p class="note">Войдите с почтой и паролем пользователя, созданного в Supabase Auth.</p><label class="field"><span>Электронная почта</span><input type="email" id="cabEmail" autocomplete="username"></label><label class="field"><span>Пароль</span><input type="password" id="cabPass" autocomplete="current-password"></label><small class="err" id="cabErr"></small><div class="row"><button class="btn pri" data-a="login">Войти</button></div>';
+    if (OWNER_SETUP_STATE === null) {
+      box.innerHTML = '<h1 class="h1s">Кабинет владельца</h1><p class="note">Проверяем, настроен ли кабинет…</p>';
+      if (!OWNER_SETUP_CHECKING) {
+        OWNER_SETUP_CHECKING = true;
+        apiCall("/api/setup").then(data => { OWNER_SETUP_STATE = !!data.initialized; })
+          .catch(e => { OWNER_SETUP_STATE = "error"; })
+          .finally(() => { OWNER_SETUP_CHECKING = false; renderCabinet(); });
+      }
+      return;
+    }
+    if (OWNER_SETUP_STATE === "error") {
+      box.innerHTML = '<h1 class="h1s">Кабинет владельца</h1><p class="err">Не удалось проверить настройку кабинета. Проверьте подключение сервера.</p><button class="btn" data-a="setup-retry">Повторить</button>';
+      return;
+    }
+    const first = !OWNER_SETUP_STATE;
+    box.innerHTML = '<h1 class="h1s">Кабинет владельца</h1><p class="note">' +
+      (first ? 'Первичная настройка: создайте аккаунт владельца. Это можно сделать только один раз.' : 'Войдите в кабинет с вашим email и паролем.') +
+      '</p><label class="field"><span>Электронная почта</span><input type="email" id="cabEmail" autocomplete="username"></label><label class="field"><span>Пароль</span><input type="password" id="cabPass" autocomplete="' + (first ? 'new-password' : 'current-password') + '" minlength="8"></label><small class="note">' +
+      (first ? 'Придумайте пароль длиной не менее 8 символов.' : '') +
+      '</small><small class="err" id="cabErr"></small><div class="row"><button class="btn pri" data-a="' + (first ? 'setup-owner' : 'login') + '">' + (first ? 'Создать аккаунт владельца' : 'Войти') + '</button></div>';
     return;
   }
   box.innerHTML = '<div class="tabs2">' + [["reqs", "Заявки"], ["tar", "Тарифы"], ["co", "Компания"]].map(x => '<button class="tab" data-tab="' + x[0] + '" aria-pressed="' + (cab.tab === x[0]) + '">' + x[1] + "</button>").join("") + '<button class="tab" data-a="logout">Выйти</button></div><div id="cabBody"></div>';
@@ -807,7 +828,18 @@ $("cab").addEventListener("click", e => {
   const el = e.target.closest("[data-a],[data-tab]"); if (!el) return;
   if (el.dataset.tab) { cab.tab = el.dataset.tab; renderCabinet(); return; }
   const a = el.dataset.a;
-  if (a === "login") {
+  if (a === "setup-retry") { OWNER_SETUP_STATE = null; renderCabinet(); }
+  else if (a === "setup-owner") {
+    const email = $("cabEmail").value.trim(), password = $("cabPass").value;
+    if (!email || password.length < 8) { $("cabErr").textContent = "Введите email и пароль не короче 8 символов"; return; }
+    el.disabled = true;
+    apiCall("/api/setup", { method: "POST", body: JSON.stringify({ email, password }) })
+      .then(() => { OWNER_SETUP_STATE = true; return ownerLogin(email, password); })
+      .then(async () => { await loadCfg(); applyCompany(); renderPicker(); renderCart(); renderCabinet(); })
+      .catch(e => { $("cabErr").textContent = e.message; OWNER_SETUP_STATE = null; })
+      .finally(() => { el.disabled = false; });
+  }
+  else if (a === "login") {
     el.disabled = true;
     ownerLogin($("cabEmail").value.trim(), $("cabPass").value).then(async () => { await loadCfg(); applyCompany(); renderPicker(); renderCart(); renderCabinet(); })
       .catch(e => { $("cabErr").textContent = e.message; }).finally(() => { el.disabled = false; });
