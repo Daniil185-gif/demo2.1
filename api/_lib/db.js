@@ -28,8 +28,9 @@ async function owner(req) {
   });
   if (!response.ok) return null;
   const user = await response.json();
-  const allowed = (process.env.ADMIN_EMAILS || "").split(",").map(x => x.trim().toLowerCase()).filter(Boolean);
-  if (!user.email || !allowed.includes(user.email.toLowerCase())) return null;
+  if (!user.email) return null;
+  const rows = await rest("/rest/v1/owners?select=email&id=eq.1&limit=1");
+  if (!rows[0] || rows[0].email.toLowerCase() !== user.email.toLowerCase()) return null;
   return user;
 }
 function json(res, status, data) {
